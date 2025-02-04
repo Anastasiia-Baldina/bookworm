@@ -1,0 +1,13 @@
+token-id: '7781761396:AAEvBwGqFqwQfLpQhPkG8y8luYwvnyO4ZPs'
+telegram-listener:
+  delay-on-error-millis: 1_000
+  max-poll-size: 10
+  max-poll-time-secs: 1
+kafka:
+  topics:
+    'FileMessage': 'income_file'
+    'TextMessage': 'income_message'
+  common:
+    "[bootstrap.servers]": " 172.24.92.220:9092"
+  producer:
+    "[client.id]": 'bookworm-telegram-bot'

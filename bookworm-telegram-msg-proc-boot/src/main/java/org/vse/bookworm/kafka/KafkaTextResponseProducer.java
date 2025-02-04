@@ -1,0 +1,36 @@
+package org.vse.bookworm.kafka;
+
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.serialization.StringSerializer;
+import org.vse.bookworm.dto.kafka.TextResponse;
+import org.vse.bookworm.dto.kafka.utils.UDto;
+import org.vse.bookworm.kafka.properties.KafkaProducerProperties;
+import org.vse.bookworm.utils.Asserts;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.Future;
+
+public class KafkaTextResponseProducer {
+    private final String topic;
+    private final KafkaProducer<String, String> client;
+
+    public KafkaTextResponseProducer(KafkaProducerProperties cfg) {
+        this.topic = Asserts.notEmpty(cfg.getTopic(), "topic");
+        Map<String, Object> props = new HashMap<>(cfg.getProducer());
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        this.client = new KafkaProducer<>(props);
+    }
+
+    public Future<RecordMetadata> send(TextResponse rsp) {
+        var rec = new ProducerRecord<>(
+                topic, String.valueOf(rsp.getAffinityKey()), UDto.serialize(rsp));
+
+        return client.send(rec);
+    }
+}

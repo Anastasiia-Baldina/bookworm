@@ -1,0 +1,19 @@
+package org.vse.bookworm.telegram;
+
+import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.request.SendMessage;
+import org.vse.bookworm.dto.kafka.TextResponse;
+
+public class TelegramTextResponder implements TelegramResponder<TextResponse> {
+    private final TelegramBot bot;
+
+    public TelegramTextResponder(TelegramBot bot) {
+        this.bot = bot;
+    }
+
+    @Override
+    public void send(TextResponse response) {
+        SendMessage msg = new SendMessage(response.getChatId(), response.getText());
+        bot.execute(msg);
+    }
+}
