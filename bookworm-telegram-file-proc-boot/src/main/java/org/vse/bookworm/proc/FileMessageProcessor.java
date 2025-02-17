@@ -5,9 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.vse.bookworm.dto.kafka.FileMessage;
 import org.vse.bookworm.dto.kafka.TextResponse;
 import org.vse.bookworm.kafka.KafkaTextResponseProducer;
+import org.vse.bookworm.parser.Fb2Parser;
 import org.vse.bookworm.proc.properties.ProcessorProperties;
 import org.vse.bookworm.utils.Asserts;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -45,16 +50,25 @@ public class FileMessageProcessor {
         } else {
             try {
                 var url = URI.create(uriTemplate.replace("#FILEPATH", msg.getPath())).toURL();
-                byte[] buffer;
-                try (var is = url.openStream()) {
-                    buffer = is.readAllBytes();
-                }
+                //var fileEntry = readTextFile(url.openStream());
+                var fBook = new Fb2Parser().parse(url.openStream());
                 sendResponse(msg, "Файл " + msg.getFilename() + "обработан");
             } catch (Exception e) {
                 log.error("Failed to process file: messageId={}", msg.getMessageId(), e);
                 sendResponse(msg, "Ошибка обработки файла. Повторите операцию позднее");
             }
         }
+    }
+
+    private static String readTextFile(InputStream is) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        try(var reader = new BufferedReader(new InputStreamReader(is))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append("\n");
+            }
+        }
+        return stringBuilder.toString();
     }
 
     private void sendResponse(FileMessage msg, String text) {

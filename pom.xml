@@ -17,6 +17,8 @@
         <module>bookworm-telegram-file-proc-boot</module>
         <module>bookworm-internal-facade-boot</module>
         <module>bookworm-internal-shard</module>
+        <module>bookworm-ebook-parser</module>
+        <module>fb2-jaxb</module>
     </modules>
 
     <properties>
@@ -46,6 +48,18 @@
                 <artifactId>bookworm-utils</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.vse.bookworm</groupId>
+                <artifactId>fb2-jaxb</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.vse.bookworm</groupId>
+                <artifactId>bookworm-ebook-parser</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
