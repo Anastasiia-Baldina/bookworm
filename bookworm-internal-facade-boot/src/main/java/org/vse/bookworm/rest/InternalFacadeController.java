@@ -1,20 +1,54 @@
 package org.vse.bookworm.rest;
 
 
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.vse.bookworm.dto.internal.LoginRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.RestClientResponseException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.vse.bookworm.service.Router;
 
-@RestController
+import java.net.URI;
+
+@Controller
+@RequestMapping("/book-worm")
 public class InternalFacadeController {
-    private final ShardDownStream downStream;
+    private static final Logger log = LoggerFactory.getLogger(InternalFacadeController.class);
+    private final Router router;
+    private final RestTemplate restTemplate;
 
-    public InternalFacadeController(ShardDownStream downStream) {
-        this.downStream = downStream;
+    public InternalFacadeController(Router router, RestTemplate restTemplate) {
+        this.router = router;
+        this.restTemplate = restTemplate;
     }
 
-    public void login(@RequestBody LoginRequest loginRequest) {
-
+    @PostMapping(value = "/{id}/**", produces = "application/json")
+    public ResponseEntity<byte[]> proxy(@PathVariable("id") long id, RequestEntity<byte[]> request) {
+        try {
+            var host = router.route(id);
+            URI uri = UriComponentsBuilder.fromUriString(host.endpoint())
+                    .path(request.getUrl().getPath())
+                    .query(request.getUrl().getRawQuery())
+                    .build()
+                    .toUri();
+            RequestEntity<byte[]> requestCopy = new RequestEntity<>(
+                    request.getBody(), request.getHeaders(), request.getMethod(),
+                    uri, request.getType());
+            return restTemplate.exchange(requestCopy, byte[].class);
+        } catch (RestClientResponseException e) {
+            log.error("Error during proxy request", e);
+            return new ResponseEntity<>(e.getResponseBodyAsByteArray(),
+                    e.getResponseHeaders(), e.getStatusCode());
+        } catch (Exception e) {
+            log.error("Error during proxy request", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

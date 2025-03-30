@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.vse.bookworm.dto.kafka.TextMessage;
 import org.vse.bookworm.kafka.KafkaDataSender;
 import org.vse.bookworm.kafka.TopicResolver;
 import org.vse.bookworm.kafka.properties.KafkaProperties;

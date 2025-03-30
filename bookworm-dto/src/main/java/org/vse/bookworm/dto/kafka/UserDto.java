@@ -1,17 +1,17 @@
-package org.vse.bookworm.dto.internal;
+package org.vse.bookworm.dto.kafka;
 
-public class LoginRequest {
-    private long userId;
+public class UserDto {
+    private long id;
     private String firstName;
     private String lastName;
     private String userName;
 
-    public long getUserId() {
-        return userId;
+    public long getId() {
+        return id;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -38,38 +38,39 @@ public class LoginRequest {
         this.userName = userName;
     }
 
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     public String toString() {
-        return "LoginRequest{" +
-                "userId=" + userId +
+        return "User{" +
+                "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", userName='" + userName + '\'' +
                 '}';
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public static class Builder {
-        private long userId;
+        private long id;
         private String firstName;
         private String lastName;
         private String userName;
 
-        public LoginRequest build() {
-            LoginRequest rq = new LoginRequest();
-            rq.setUserId(userId);
-            rq.setFirstName(firstName);
-            rq.setLastName(lastName);
-            rq.setUserName(userName);
+        public UserDto build() {
+            UserDto user = new UserDto();
+            user.setId(id);
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setUserName(userName);
 
-            return rq;
+            return user;
         }
 
-        public Builder setUserId(long userId) {
-            this.userId = userId;
+        public Builder setId(long id) {
+            this.id = id;
             return this;
         }
 

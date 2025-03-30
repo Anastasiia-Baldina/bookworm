@@ -1,7 +1,6 @@
 package org.vse.bookworm.dto.kafka.utils;
 
 import com.google.gson.Gson;
-import org.vse.bookworm.dto.kafka.TextMessage;
 
 public final class UDto {
     private static final Gson GSON = new Gson();

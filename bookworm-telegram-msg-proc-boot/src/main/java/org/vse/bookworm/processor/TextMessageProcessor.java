@@ -3,8 +3,8 @@ package org.vse.bookworm.processor;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vse.bookworm.dto.kafka.TextMessage;
-import org.vse.bookworm.dto.kafka.TextResponse;
+import org.vse.bookworm.dto.kafka.TextMessageDto;
+import org.vse.bookworm.dto.kafka.TextResponseDto;
 import org.vse.bookworm.kafka.KafkaTextResponseProducer;
 import org.vse.bookworm.processor.cmd.Command;
 import org.vse.bookworm.processor.cmd.CommandHandler;
@@ -28,12 +28,12 @@ public class TextMessageProcessor {
         this.kafka = kafkaTextResponseProducer;
     }
 
-    public void process(List<TextMessage> msgList) {
+    public void process(List<TextMessageDto> msgList) {
         List<Future<RecordMetadata>> ftrList = new ArrayList<>();
         for (var msg : msgList) {
             try {
                 log.info("Income message: {}", msg);
-                TextResponse rsp = processMessage(msg);
+                TextResponseDto rsp = processMessage(msg);
                 if (rsp != null) {
                     log.info("Response: {}", rsp);
                     ftrList.add(kafka.send(rsp));
@@ -54,7 +54,7 @@ public class TextMessageProcessor {
         });
     }
 
-    private TextResponse processMessage(TextMessage msg) {
+    private TextResponseDto processMessage(TextMessageDto msg) {
         var text = msg.getText();
         if (text.startsWith("/")) {
             var txtCmd = extractCommandText(text);
@@ -76,7 +76,7 @@ public class TextMessageProcessor {
         }
     }
 
-    private static TextResponse unknownCommand(String txtCmd, long chatId) {
+    private static TextResponseDto unknownCommand(String txtCmd, long chatId) {
         var commands = Command.values();
         List<String> lines = new ArrayList<>(commands.length + 2);
         lines.add("Неизвестная команда: " + txtCmd + '\n');
@@ -84,7 +84,7 @@ public class TextMessageProcessor {
         for (var cmd : commands) {
             lines.add(cmd.text() + ' ' + cmd.info());
         }
-        return TextResponse.builder()
+        return TextResponseDto.builder()
                 .setChatId(chatId)
                 .setText(String.join("\n", lines))
                 .setAffinityKey(chatId)

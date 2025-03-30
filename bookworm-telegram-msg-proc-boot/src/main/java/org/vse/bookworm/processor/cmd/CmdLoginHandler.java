@@ -1,12 +1,12 @@
 package org.vse.bookworm.processor.cmd;
 
-import org.vse.bookworm.dto.kafka.TextMessage;
-import org.vse.bookworm.dto.kafka.TextResponse;
+import org.vse.bookworm.dto.kafka.TextMessageDto;
+import org.vse.bookworm.dto.kafka.TextResponseDto;
 
 public class CmdLoginHandler implements CommandHandler{
     @Override
-    public TextResponse handle(TextMessage msg) {
-        return TextResponse.builder()
+    public TextResponseDto handle(TextMessageDto msg) {
+        return TextResponseDto.builder()
                 .setAffinityKey(msg.getAffinityKey())
                 .setChatId(msg.getChat().getId())
                 .setText("Код авторизации: 123456")

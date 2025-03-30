@@ -1,10 +1,10 @@
 package org.vse.bookworm.processor.cmd;
 
-import org.vse.bookworm.dto.kafka.TextMessage;
-import org.vse.bookworm.dto.kafka.TextResponse;
+import org.vse.bookworm.dto.kafka.TextMessageDto;
+import org.vse.bookworm.dto.kafka.TextResponseDto;
 
 public interface CommandHandler {
-    TextResponse handle(TextMessage msg);
+    TextResponseDto handle(TextMessageDto msg);
 
     Command command();
 }

@@ -13,7 +13,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vse.bookworm.dto.kafka.FileMessage;
+import org.vse.bookworm.dto.kafka.FileMessageDto;
 import org.vse.bookworm.kafka.KafkaDataSender;
 import org.vse.bookworm.telegram.properties.TelegramListenerProperties;
 import org.vse.bookworm.telegram.utils.TlgDto;
@@ -114,7 +114,7 @@ public class TelegramBotListener implements AutoCloseable {
                 if(doc.fileName() != null) {
                     GetFile rqFile = new GetFile(doc.fileId());
                     GetFileResponse rsFile = bot.execute(rqFile);
-                    FileMessage fileMsg = TlgDto.fileMessage(upd, rsFile.file());
+                    FileMessageDto fileMsg = TlgDto.fileMessage(upd, rsFile.file());
                     return new WrappedFuture<>(upd, msgSender.send(fileMsg));
                 }
             }

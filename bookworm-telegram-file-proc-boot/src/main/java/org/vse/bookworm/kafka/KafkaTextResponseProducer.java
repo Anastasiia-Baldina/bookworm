@@ -5,7 +5,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.vse.bookworm.dto.kafka.TextResponse;
+import org.vse.bookworm.dto.kafka.TextResponseDto;
 import org.vse.bookworm.dto.kafka.utils.UDto;
 import org.vse.bookworm.kafka.properties.KafkaProducerProperties;
 import org.vse.bookworm.utils.Asserts;
@@ -26,7 +26,7 @@ public class KafkaTextResponseProducer {
         this.client = new KafkaProducer<>(props);
     }
 
-    public Future<RecordMetadata> send(TextResponse rsp) {
+    public Future<RecordMetadata> send(TextResponseDto rsp) {
         var rec = new ProducerRecord<>(
                 topic, String.valueOf(rsp.getAffinityKey()), UDto.serialize(rsp));
 

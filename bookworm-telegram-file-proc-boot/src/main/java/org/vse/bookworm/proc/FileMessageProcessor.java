@@ -2,10 +2,10 @@ package org.vse.bookworm.proc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vse.bookworm.dto.kafka.FileMessage;
-import org.vse.bookworm.dto.kafka.TextResponse;
+import org.vse.bookworm.dto.kafka.FileMessageDto;
+import org.vse.bookworm.dto.kafka.TextResponseDto;
 import org.vse.bookworm.kafka.KafkaTextResponseProducer;
-import org.vse.bookworm.parser.Fb2Parser;
+import org.vse.bookworm.parser.JaxbFb2Parser;
 import org.vse.bookworm.proc.properties.ProcessorProperties;
 import org.vse.bookworm.utils.Asserts;
 
@@ -32,7 +32,7 @@ public class FileMessageProcessor {
         this.kafka = kafkaTextResponseProducer;
     }
 
-    public void process(List<FileMessage> msgList) {
+    public void process(List<FileMessageDto> msgList) {
         for (var msg : msgList) {
             try {
                 processMessage(msg);
@@ -42,7 +42,7 @@ public class FileMessageProcessor {
         }
     }
 
-    private void processMessage(FileMessage msg) {
+    private void processMessage(FileMessageDto msg) {
         if (msg.getFilename().endsWith(".fb2")) {
             sendResponse(msg, "Ошибка: файл должен иметь расширение .fb2");
         } else if (msg.getFileSize() > maxFileSize) {
@@ -51,7 +51,7 @@ public class FileMessageProcessor {
             try {
                 var url = URI.create(uriTemplate.replace("#FILEPATH", msg.getPath())).toURL();
                 //var fileEntry = readTextFile(url.openStream());
-                var fBook = new Fb2Parser().parse(url.openStream());
+                var fBook = JaxbFb2Parser.getInstance().parse(url.openStream());
                 sendResponse(msg, "Файл " + msg.getFilename() + "обработан");
             } catch (Exception e) {
                 log.error("Failed to process file: messageId={}", msg.getMessageId(), e);
@@ -71,10 +71,10 @@ public class FileMessageProcessor {
         return stringBuilder.toString();
     }
 
-    private void sendResponse(FileMessage msg, String text) {
+    private void sendResponse(FileMessageDto msg, String text) {
         log.info("Send response: {}, messageId={}", text, msg.getMessageId());
 
-        var rsp = TextResponse.builder()
+        var rsp = TextResponseDto.builder()
                 .setText(text)
                 .setChatId(msg.getChat().getId())
                 .setAffinityKey(msg.getAffinityKey())

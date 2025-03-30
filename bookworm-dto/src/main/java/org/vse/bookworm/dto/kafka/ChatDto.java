@@ -1,10 +1,12 @@
 package org.vse.bookworm.dto.kafka;
 
-public class User {
+public class ChatDto {
     private long id;
+    private String type;
     private String firstName;
     private String lastName;
     private String userName;
+    private String title;
 
     public long getId() {
         return id;
@@ -12,6 +14,14 @@ public class User {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getFirstName() {
@@ -38,39 +48,56 @@ public class User {
         this.userName = userName;
     }
 
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
     @Override
     public String toString() {
-        return "User{" +
+        return "Chat{" +
                 "id=" + id +
+                ", type='" + type + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", userName='" + userName + '\'' +
                 '}';
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public static class Builder {
         private long id;
+        private String type;
         private String firstName;
         private String lastName;
         private String userName;
+        private String title;
 
-        public User build() {
-            User user = new User();
-            user.setId(id);
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setUserName(userName);
+        public ChatDto build() {
+            ChatDto c = new ChatDto();
+            c.setId(id);
+            c.setType(type);
+            c.setFirstName(firstName);
+            c.setLastName(lastName);
+            c.setUserName(userName);
+            c.setTitle(title);
 
-            return user;
+            return c;
         }
 
         public Builder setId(long id) {
             this.id = id;
+            return this;
+        }
+
+        public Builder setType(String type) {
+            this.type = type;
             return this;
         }
 
@@ -86,6 +113,11 @@ public class User {
 
         public Builder setUserName(String userName) {
             this.userName = userName;
+            return this;
+        }
+
+        public Builder setTitle(String title) {
+            this.title = title;
             return this;
         }
     }

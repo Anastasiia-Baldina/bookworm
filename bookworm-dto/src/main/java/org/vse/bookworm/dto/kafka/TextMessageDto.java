@@ -2,12 +2,12 @@ package org.vse.bookworm.dto.kafka;
 
 import java.util.Date;
 
-public class TextMessage implements Partitioned {
+public class TextMessageDto implements Partitioned {
     private long messageId;
     private String text;
     private Date date;
-    private User sender;
-    private Chat chat;
+    private UserDto sender;
+    private ChatDto chat;
     private long affinityKey;
 
     public long getMessageId() {
@@ -34,19 +34,19 @@ public class TextMessage implements Partitioned {
         this.date = date;
     }
 
-    public User getSender() {
+    public UserDto getSender() {
         return sender;
     }
 
-    public void setSender(User sender) {
+    public void setSender(UserDto sender) {
         this.sender = sender;
     }
 
-    public Chat getChat() {
+    public ChatDto getChat() {
         return chat;
     }
 
-    public void setChat(Chat chat) {
+    public void setChat(ChatDto chat) {
         this.chat = chat;
     }
 
@@ -77,12 +77,12 @@ public class TextMessage implements Partitioned {
         private long messageId;
         private String text;
         private Date date;
-        private User sender;
-        private Chat chat;
+        private UserDto sender;
+        private ChatDto chat;
         private long affinityKey;
 
-        public TextMessage build() {
-            TextMessage msg = new TextMessage();
+        public TextMessageDto build() {
+            TextMessageDto msg = new TextMessageDto();
             msg.setDate(date);
             msg.setText(text);
             msg.setMessageId(messageId);
@@ -108,12 +108,12 @@ public class TextMessage implements Partitioned {
             return this;
         }
 
-        public Builder setSender(User sender) {
+        public Builder setSender(UserDto sender) {
             this.sender = sender;
             return this;
         }
 
-        public Builder setChat(Chat chat) {
+        public Builder setChat(ChatDto chat) {
             this.chat = chat;
             return this;
         }

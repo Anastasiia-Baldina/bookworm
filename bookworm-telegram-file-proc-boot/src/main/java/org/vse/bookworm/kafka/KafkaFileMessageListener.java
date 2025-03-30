@@ -6,7 +6,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vse.bookworm.dto.kafka.FileMessage;
+import org.vse.bookworm.dto.kafka.FileMessageDto;
 import org.vse.bookworm.dto.kafka.utils.UDto;
 import org.vse.bookworm.kafka.properties.KafkaListenerProperties;
 import org.vse.bookworm.proc.FileMessageProcessor;
@@ -58,13 +58,13 @@ public class KafkaFileMessageListener implements AutoCloseable {
                 if (kafkaRecs.isEmpty()) {
                     continue;
                 }
-                List<FileMessage> msgList = new ArrayList<>(kafkaRecs.count());
+                List<FileMessageDto> msgList = new ArrayList<>(kafkaRecs.count());
                 for (var rec : kafkaRecs) {
-                    FileMessage msg;
+                    FileMessageDto msg;
                     String json = rec.value();
                     try {
                         log.info("Kafka fetch: {}", json);
-                        msg = UDto.deserialize(json, FileMessage.class);
+                        msg = UDto.deserialize(json, FileMessageDto.class);
                     } catch (Exception e) {
                         log.error("Failed deserialize kafka record. p={},ofs={},msg={}",
                                 rec.partition(), rec.offset(), json);

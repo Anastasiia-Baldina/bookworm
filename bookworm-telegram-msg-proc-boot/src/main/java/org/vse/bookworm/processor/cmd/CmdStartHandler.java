@@ -1,7 +1,7 @@
 package org.vse.bookworm.processor.cmd;
 
-import org.vse.bookworm.dto.kafka.TextMessage;
-import org.vse.bookworm.dto.kafka.TextResponse;
+import org.vse.bookworm.dto.kafka.TextMessageDto;
+import org.vse.bookworm.dto.kafka.TextResponseDto;
 
 import java.util.stream.Stream;
 
@@ -17,8 +17,8 @@ public class CmdStartHandler implements CommandHandler {
     }
 
     @Override
-    public TextResponse handle(TextMessage msg) {
-        return TextResponse.builder()
+    public TextResponseDto handle(TextMessageDto msg) {
+        return TextResponseDto.builder()
                 .setChatId(msg.getChat().getId())
                 .setAffinityKey(msg.getAffinityKey())
                 .setText(REPLY)

@@ -4,10 +4,10 @@ import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import org.jetbrains.annotations.NotNull;
-import org.vse.bookworm.dto.kafka.Chat;
-import org.vse.bookworm.dto.kafka.FileMessage;
-import org.vse.bookworm.dto.kafka.TextMessage;
-import org.vse.bookworm.dto.kafka.User;
+import org.vse.bookworm.dto.kafka.ChatDto;
+import org.vse.bookworm.dto.kafka.FileMessageDto;
+import org.vse.bookworm.dto.kafka.TextMessageDto;
+import org.vse.bookworm.dto.kafka.UserDto;
 import org.vse.bookworm.utils.Asserts;
 
 public final class TlgDto {
@@ -15,10 +15,10 @@ public final class TlgDto {
     }
 
     @NotNull
-    public static TextMessage textMessage(@NotNull Update upd) {
+    public static TextMessageDto textMessage(@NotNull Update upd) {
         var msg = Asserts.notNull(upd.message(), "Update.message");
         var chat = chat(msg);
-        return TextMessage.builder()
+        return TextMessageDto.builder()
                 .setText(msg.text())
                 .setChat(chat(msg))
                 .setSender(user(msg))
@@ -28,12 +28,12 @@ public final class TlgDto {
     }
 
     @NotNull
-    public static FileMessage fileMessage(@NotNull Update upd, @NotNull File file) {
+    public static FileMessageDto fileMessage(@NotNull Update upd, @NotNull File file) {
         var msg = Asserts.notNull(upd.message(), "Update.message");
         var doc = Asserts.notNull(msg.document(), "Update.message.document");
         var chat = chat(msg);
 
-        return FileMessage.builder()
+        return FileMessageDto.builder()
                 .setFileId(doc.fileId())
                 .setFileUniqueId(doc.fileUniqueId())
                 .setFileSize(Asserts.notNull(file.fileSize(), "fileSize"))
@@ -47,10 +47,10 @@ public final class TlgDto {
     }
 
     @NotNull
-    public static User user(@NotNull Message msg) {
+    public static UserDto user(@NotNull Message msg) {
         var usr = Asserts.notNull(msg.from(), "Message.from");
 
-        return  User.builder()
+        return  UserDto.builder()
                 .setFirstName(usr.firstName())
                 .setLastName(usr.lastName())
                 .setUserName(usr.username())
@@ -59,9 +59,9 @@ public final class TlgDto {
     }
 
     @NotNull
-    public static Chat chat(@NotNull Message msg) {
+    public static ChatDto chat(@NotNull Message msg) {
         var chat = Asserts.notNull(msg.chat(), "Message.chat");
-        return Chat.builder()
+        return ChatDto.builder()
                 .setFirstName(chat.firstName())
                 .setLastName(chat.lastName())
                 .setUserName(chat.username())

@@ -27,6 +27,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <spring-boot.version>3.4.2</spring-boot.version>
+        <spring.version>6.2.3</spring.version>
         <slf4j-api.version>2.0.12</slf4j-api.version>
         <logback.version>1.5.13</logback.version>
         <logback.access.version>2.0.1</logback.access.version>
@@ -74,6 +75,11 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
             <dependency>

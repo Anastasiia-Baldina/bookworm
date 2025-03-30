@@ -8,8 +8,9 @@ import org.vse.bookworm.parser.exception.IllegalFb2FormatException;
 
 import java.io.InputStream;
 
-public class Fb2Parser {
+public class JaxbFb2Parser {
     private static final Unmarshaller UNMARSHALLER;
+    private static final JaxbFb2Parser INSTANCE = new JaxbFb2Parser();
 
     static {
         JAXBContext context;
@@ -35,5 +36,9 @@ public class Fb2Parser {
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static JaxbFb2Parser getInstance() {
+        return INSTANCE;
     }
 }

@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.vse.bookworm.dto.kafka.TextResponse;
+import org.vse.bookworm.dto.kafka.TextResponseDto;
 import org.vse.bookworm.kafka.KafkaResponseListener;
 import org.vse.bookworm.kafka.properties.KafkaProperties;
 import org.vse.bookworm.telegram.TelegramTextResponder;
@@ -32,8 +32,8 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    KafkaResponseListener<TextResponse> kafkaTextResponseListener() {
+    KafkaResponseListener<TextResponseDto> kafkaTextResponseListener() {
         return new KafkaResponseListener<>(
-                TextResponse.class, textResponseKafkaProperties(), telegramTextResponder());
+                TextResponseDto.class, textResponseKafkaProperties(), telegramTextResponder());
     }
 }

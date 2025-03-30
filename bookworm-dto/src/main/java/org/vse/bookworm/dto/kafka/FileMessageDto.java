@@ -1,6 +1,6 @@
 package org.vse.bookworm.dto.kafka;
 
-public class FileMessage implements Partitioned {
+public class FileMessageDto implements Partitioned {
     private long affinityKey;
     private long messageId;
     private String filename;
@@ -9,8 +9,8 @@ public class FileMessage implements Partitioned {
     private String fileUniqueId;
     private String path;
     private String caption;
-    private User user;
-    private Chat chat;
+    private UserDto user;
+    private ChatDto chat;
 
     public long getMessageId() {
         return messageId;
@@ -36,19 +36,19 @@ public class FileMessage implements Partitioned {
         this.path = path;
     }
 
-    public User getUser() {
+    public UserDto getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDto user) {
         this.user = user;
     }
 
-    public Chat getChat() {
+    public ChatDto getChat() {
         return chat;
     }
 
-    public void setChat(Chat chat) {
+    public void setChat(ChatDto chat) {
         this.chat = chat;
     }
 
@@ -121,12 +121,12 @@ public class FileMessage implements Partitioned {
         private String fileId;
         private String fileUniqueId;
         private String path;
-        private User user;
-        private Chat chat;
+        private UserDto user;
+        private ChatDto chat;
         private String caption;
 
-        public FileMessage build() {
-            FileMessage fm = new FileMessage();
+        public FileMessageDto build() {
+            FileMessageDto fm = new FileMessageDto();
             fm.setAffinityKey(affinityKey);
             fm.setMessageId(messageId);
             fm.setFilename(filename);
@@ -176,12 +176,12 @@ public class FileMessage implements Partitioned {
             return this;
         }
 
-        public Builder setUser(User user) {
+        public Builder setUser(UserDto user) {
             this.user = user;
             return this;
         }
 
-        public Builder setChat(Chat chat) {
+        public Builder setChat(ChatDto chat) {
             this.chat = chat;
             return this;
         }

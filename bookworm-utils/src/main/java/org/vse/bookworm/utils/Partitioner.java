@@ -1,11 +1,11 @@
 package org.vse.bookworm.utils;
 
-public interface AffinityFunction {
-    int getPartition(long affinityKey);
+public interface Partitioner {
+    int getPartition(Object affinityKey);
 
     int getShardId(int partition);
 
-    static AffinityFunction modFunc(int shardCount, int partitionCount) {
+    static Partitioner modFunc(int shardCount, int partitionCount) {
         if (shardCount < 0) {
             throw new IllegalArgumentException("Shard count mustn't be less then zero");
         }
@@ -15,10 +15,10 @@ public interface AffinityFunction {
         if (partitionCount < shardCount) {
             throw new IllegalArgumentException("Shard count must be less then partition count");
         }
-        return new AffinityFunction() {
+        return new Partitioner() {
             @Override
-            public int getPartition(long affinityKey) {
-                return (int) (affinityKey % partitionCount);
+            public int getPartition(Object affinityKey) {
+                return Math.abs(affinityKey.hashCode() % partitionCount);
             }
 
             @Override

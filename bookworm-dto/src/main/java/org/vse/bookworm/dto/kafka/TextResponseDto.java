@@ -1,6 +1,6 @@
 package org.vse.bookworm.dto.kafka;
 
-public class TextResponse implements Partitioned {
+public class TextResponseDto implements Partitioned {
     private long affinityKey;
     private long chatId;
     private String text;
@@ -48,8 +48,8 @@ public class TextResponse implements Partitioned {
         private long chatId;
         private String text;
 
-        public TextResponse build() {
-            var rsp = new TextResponse();
+        public TextResponseDto build() {
+            var rsp = new TextResponseDto();
             rsp.setAffinityKey(affinityKey);
             rsp.setChatId(chatId);
             rsp.setText(text);
