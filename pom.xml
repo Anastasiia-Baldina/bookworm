@@ -16,7 +16,7 @@
         <module>bookworm-telegram-msg-proc-boot</module>
         <module>bookworm-telegram-file-proc-boot</module>
         <module>bookworm-internal-facade-boot</module>
-        <module>bookworm-internal-shard</module>
+        <module>bookworm-internal-shard-boot</module>
         <module>bookworm-ebook-parser</module>
         <module>fb2-jaxb</module>
     </modules>

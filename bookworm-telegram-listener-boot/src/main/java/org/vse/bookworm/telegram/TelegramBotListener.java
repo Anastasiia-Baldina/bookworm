@@ -2,9 +2,11 @@ package org.vse.bookworm.telegram;
 
 import com.google.gson.Gson;
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.model.Document;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.GetUpdates;
 import com.pengrad.telegrambot.response.GetFileResponse;
@@ -108,6 +110,7 @@ public class TelegramBotListener implements AutoCloseable {
         try {
             Message updMsg = upd.message();
             if (updMsg.text() != null) {
+                var rsp = bot.execute(new GetChatMember(updMsg.chat().id(), updMsg.from().id()));
                 return new WrappedFuture<>(upd, msgSender.send(TlgDto.textMessage(upd)));
             } else if(updMsg.document() != null) {
                 Document doc = updMsg.document();
