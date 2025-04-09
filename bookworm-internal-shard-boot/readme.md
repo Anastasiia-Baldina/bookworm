@@ -1,0 +1,1 @@
+curl.exe -d '{"userId":123,"firstName":"Ivan","lastName":"Ivanov","userName":"IvanovIvan"}' -H 'Content-Type: application/json' http://localhost:8081/book-worm/1/login

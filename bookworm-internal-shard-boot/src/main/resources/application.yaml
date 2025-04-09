@@ -1,0 +1,14 @@
+spring:
+  server:
+    port: 8081
+cluster:
+  zookeeper_connection_string: localhost:2181
+  shard: 0
+  servicePort: ${spring.server.port}
+session:
+  maxAcceptCode: 999999
+db:
+  url: "jdbc:postgresql://localhost:5432/postgres"
+  username: postgres
+  password: postgres
+  schema: book_worm

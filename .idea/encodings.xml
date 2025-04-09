@@ -9,8 +9,8 @@
     <file url="file://$PROJECT_DIR$/bookworm-ebook-parser/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/bookworm-internal-facade-boot/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/bookworm-internal-facade-boot/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/bookworm-internal-shard/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/bookworm-internal-shard/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/bookworm-internal-shard-boot/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/bookworm-internal-shard-boot/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/bookworm-telegram-file-proc-boot/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/bookworm-telegram-file-proc-boot/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/bookworm-telegram-file-proc/src/main/java" charset="UTF-8" />
