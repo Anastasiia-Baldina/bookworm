@@ -42,10 +42,10 @@ public class PostgresSessionRepository implements SessionRepository {
     private static final String sqlAttachDevice =
             "update user_session set" +
                     "   device_id = :device_id," +
-                    "   device_name = :device_name," +
-                    "   accept_code = :accept_code" +
+                    "   device_name = :device_name" +
                     " where " +
-                    "   session_id = :session_id";
+                    "   session_id = :session_id" +
+                    "   and accept_code = :accept_code";
     private static final String sqlRefresh =
             "update user_session set" +
                     "   update_time = :update_time" +
@@ -137,6 +137,7 @@ public class PostgresSessionRepository implements SessionRepository {
     @Override
     public boolean attachDevice(Session session) {
         var pSrc = new MapSqlParameterSource()
+                .addValue("session_id", session.getId())
                 .addValue("device_id", session.getDeviceId())
                 .addValue("device_name", session.getDeviceName())
                 .addValue("accept_code", session.getAcceptCode());

@@ -67,18 +67,19 @@ public class ApplicationConfiguration {
 
     @Bean
     DataSource dataSource() {
-        var cfg = dbProperties();
-        var dSrc = new HikariDataSource();
-        dSrc.setJdbcUrl(cfg.getUrl());
-        dSrc.setUsername(cfg.getUsername());
-        dSrc.setPassword(cfg.getPassword());
-        dSrc.setSchema(cfg.getSchema());
         try {
+            var cfg = dbProperties();
+            var dSrc = new HikariDataSource();
+            dSrc.setJdbcUrl(cfg.getUrl());
+            dSrc.setUsername(cfg.getUsername());
+            dSrc.setPassword(cfg.getPassword());
+            dSrc.setSchema(cfg.getSchema());
+
             dSrc.getConnection().isValid(5_000);
+            return dSrc;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return dSrc;
     }
 
     @Bean

@@ -67,6 +67,18 @@ public class Session {
         return tryCount;
     }
 
+    public Builder toBuilder() {
+        return builder()
+                .setId(id)
+                .setUserId(userId)
+                .setUsername(username)
+                .setDeviceId(deviceId)
+                .setDeviceName(deviceName)
+                .setAcceptCode(acceptCode)
+                .setCreateTime(createTime)
+                .setUpdateTime(updateTime)
+                .setTryCount(tryCount);
+    }
     public static class Builder {
         private String id;
         private long userId;
