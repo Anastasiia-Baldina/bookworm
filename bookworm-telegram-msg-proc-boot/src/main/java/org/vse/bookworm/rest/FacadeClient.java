@@ -36,4 +36,10 @@ public class FacadeClient {
         var url = "http://" + endpoint + "/book-worm/" + rqDto.getUserId() + "/subscribe";
         return rest.postForObject(url, rqDto, SubscribeResponseDto.class);
     }
+
+    public UnsubscribeResponseDto unsubscribe(UnsubscribeRequestDto rqDto) {
+        var endpoint = cfg.getHost() + ":" + cfg.getPort();
+        var url = "http://" + endpoint + "/book-worm/" + rqDto.getUserId() + "/unsubscribe";
+        return rest.postForObject(url, rqDto, UnsubscribeResponseDto.class);
+    }
 }

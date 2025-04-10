@@ -19,12 +19,12 @@ public class Subscriber {
         return chatId;
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public String getChatName() {
         return chatName;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder {

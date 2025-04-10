@@ -11,13 +11,10 @@ import org.springframework.web.client.RestTemplate;
 import org.vse.bookworm.kafka.FacadeProperties;
 import org.vse.bookworm.kafka.KafkaTextMessageListener;
 import org.vse.bookworm.kafka.KafkaTextResponseProducer;
-import org.vse.bookworm.processor.cmd.CmdSubscribeHandler;
+import org.vse.bookworm.processor.cmd.*;
 import org.vse.bookworm.properties.KafkaListenerProperties;
 import org.vse.bookworm.properties.KafkaProducerProperties;
 import org.vse.bookworm.processor.TextMessageProcessor;
-import org.vse.bookworm.processor.cmd.CmdLoginHandler;
-import org.vse.bookworm.processor.cmd.CmdStartHandler;
-import org.vse.bookworm.processor.cmd.CommandHandler;
 import org.vse.bookworm.rest.FacadeClient;
 
 import java.util.List;
@@ -78,8 +75,13 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    CommandHandler cmdSubscribeHandler() {
+    CommandHandler subscribeHandler() {
         return new CmdSubscribeHandler(facadeClient(), telegramBot());
+    }
+
+    @Bean
+    CommandHandler unsubscribeHandler() {
+        return new CmdUnsubscribeHandler(facadeClient());
     }
 
     @Bean
@@ -88,7 +90,8 @@ public class ApplicationConfiguration {
                 List.of(
                         startCommandHandler(),
                         logingCommandHandler(),
-                        cmdSubscribeHandler()
+                        subscribeHandler(),
+                        unsubscribeHandler()
                 ),
                 kafkaTextResponseProducer(),
                 facadeClient()

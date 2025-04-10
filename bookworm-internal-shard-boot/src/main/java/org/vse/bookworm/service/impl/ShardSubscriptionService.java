@@ -8,6 +8,8 @@ import org.vse.bookworm.dto.internal.JoinChatRequestDto;
 import org.vse.bookworm.dto.internal.JoinChatResponseDto;
 import org.vse.bookworm.dto.internal.SubscribeRequestDto;
 import org.vse.bookworm.dto.internal.SubscribeResponseDto;
+import org.vse.bookworm.dto.internal.UnsubscribeRequestDto;
+import org.vse.bookworm.dto.internal.UnsubscribeResponseDto;
 import org.vse.bookworm.repository.ChatRepository;
 import org.vse.bookworm.repository.SubscriberRepository;
 import org.vse.bookworm.service.SubscriptionService;
@@ -46,12 +48,22 @@ public class ShardSubscriptionService implements SubscriptionService {
     @Override
     public ChatResponseDto findChat(ChatRequestDto requestDto) {
         var chat = chatRepository.findByName(requestDto.getChatName());
-        if(chat == null) {
+        if (chat == null) {
             return new ChatResponseDto();
         }
         return new ChatResponseDto()
                 .setSuccess(true)
                 .setChatName(chat.getName())
                 .setChatId(chat.getId());
+    }
+
+    @Override
+    public UnsubscribeResponseDto unsubscribe(UnsubscribeRequestDto requestDto) {
+        repository.delete(Subscriber.builder()
+                .setChatId(requestDto.getChatId())
+                .setUserId(requestDto.getUserId())
+                .build());
+        return new UnsubscribeResponseDto()
+                .setSuccess(true);
     }
 }

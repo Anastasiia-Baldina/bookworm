@@ -27,6 +27,14 @@ public class SubscriptionController implements SubscriptionService {
     }
 
     @Override
+    @PostMapping(value = "/unsubscribe", produces = "application/json")
+    @ResponseBody
+    public UnsubscribeResponseDto unsubscribe(@RequestBody UnsubscribeRequestDto requestDto) {
+        log.info("Request: /unsubscribe {}", Json.toJson(requestDto));
+        return service.unsubscribe(requestDto);
+    }
+
+    @Override
     @PostMapping(value = "/add_chat", produces = "application/json")
     @ResponseBody
     public JoinChatResponseDto addChat(@RequestBody JoinChatRequestDto requestDto) {
