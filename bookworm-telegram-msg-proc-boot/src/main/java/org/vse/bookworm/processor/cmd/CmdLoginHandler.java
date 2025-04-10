@@ -9,7 +9,7 @@ public class CmdLoginHandler implements CommandHandler{
         return TextResponseDto.builder()
                 .setAffinityKey(msg.getAffinityKey())
                 .setChatId(msg.getChat().getId())
-                .setText("Код авторизации: 123456")
+                .setText("Код пользователя:123\nКод авторизации: 123456")
                 .build();
     }
 

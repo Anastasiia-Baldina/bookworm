@@ -9,8 +9,11 @@ import java.util.stream.Collectors;
 
 public enum Command {
     START("/start", "Список команд."),
-    LOGIN("/login", "Выслать код входа в приложение")
-    ;
+    LOGIN("/login", "Выслать код входа в приложение"),
+    LOGOUT("/logout", "Выйти из приложения"),
+    SUBSCRIBE("/subscribe", "Подписаться к группе"),
+    UNSUBSCRIBE("/unsubscribe", "Отписаться от группы"),
+    BUILD("/build", "Собрать сообщения в книгу fb2");
 
     private final String text;
     private final String info;

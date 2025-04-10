@@ -1,7 +1,15 @@
-router:
-  partition-count: 2
-  shards:
-    - address: localhost
-      port: 9090
-    - address: localhost
-      port: 9091
+server:
+  port: 8090
+cluster:
+  partition-count: 1
+  shard-count: 1
+  partitions:
+    - partition: 0
+      shard: 0
+    - partition: 1
+      shard: 0
+    - partition: 2
+      shard: 0
+    - partition: 3
+      shard: 0
+  zookeeper_connection_string: localhost:2181

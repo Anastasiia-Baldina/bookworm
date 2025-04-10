@@ -22,7 +22,7 @@ import org.vse.bookworm.repository.postgres.PostgresChatMsgRepository;
 import org.vse.bookworm.repository.postgres.PostgresSessionRepository;
 import org.vse.bookworm.repository.postgres.PostgresSubscriberRepository;
 import org.vse.bookworm.repository.postgres.PostgresUserBookRepository;
-import org.vse.bookworm.rest.SessionController;
+import org.vse.bookworm.controller.SessionController;
 import org.vse.bookworm.service.SessionService;
 import org.vse.bookworm.service.impl.ShardSessionService;
 import org.vse.bookworm.utils.IdGenerator;
@@ -58,11 +58,6 @@ public class ApplicationConfiguration {
     @EventListener(ContextRefreshedEvent.class)
     public void onContextRefreshed() {
         clusterClient().register();
-    }
-
-    @EventListener(ContextClosedEvent.class)
-    public void onContextClosed() {
-        clusterClient().unregister();
     }
 
     @Bean

@@ -11,11 +11,12 @@ import org.vse.bookworm.dto.internal.HostInfoDto;
 import org.vse.bookworm.properties.ClusterProperties;
 import org.vse.bookworm.utils.Json;
 
+import java.io.Closeable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 
-public class ClusterClient {
+public class ClusterClient implements Closeable {
     private static final Logger log = LoggerFactory.getLogger(ClusterClient.class);
     private final CuratorFramework curator;
     private final HostInfoDto data;
@@ -63,7 +64,7 @@ public class ClusterClient {
         }
     }
 
-    public void unregister() {
+    public void close() {
         var node = "/cluster/" + data.getHost() + "_" + data.getPort();
         try {
             curator.delete().forPath(node);
@@ -71,5 +72,6 @@ public class ClusterClient {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        curator.close();
     }
 }

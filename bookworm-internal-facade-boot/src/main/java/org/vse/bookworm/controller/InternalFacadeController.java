@@ -1,4 +1,4 @@
-package org.vse.bookworm.rest;
+package org.vse.bookworm.controller;
 
 
 import org.slf4j.Logger;

@@ -31,4 +31,13 @@ public class HostInfoDto {
         this.port = port;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "HostInfoDto{" +
+                "host='" + host + '\'' +
+                ", port=" + port +
+                ", shardNum=" + shardNum +
+                '}';
+    }
 }

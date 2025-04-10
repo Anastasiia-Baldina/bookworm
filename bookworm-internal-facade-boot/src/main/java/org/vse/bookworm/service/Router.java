@@ -4,5 +4,5 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Router {
     @NotNull
-    Host route(long id);
+    Host route(Object key);
 }

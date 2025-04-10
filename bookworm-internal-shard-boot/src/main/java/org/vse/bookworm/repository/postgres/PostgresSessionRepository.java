@@ -42,7 +42,8 @@ public class PostgresSessionRepository implements SessionRepository {
     private static final String sqlAttachDevice =
             "update user_session set" +
                     "   device_id = :device_id," +
-                    "   device_name = :device_name" +
+                    "   device_name = :device_name," +
+                    "   update_time = :update_time" +
                     " where " +
                     "   session_id = :session_id" +
                     "   and accept_code = :accept_code";
@@ -140,6 +141,7 @@ public class PostgresSessionRepository implements SessionRepository {
                 .addValue("session_id", session.getId())
                 .addValue("device_id", session.getDeviceId())
                 .addValue("device_name", session.getDeviceName())
+                .addValue("update_time", DbUtils.timestamp(session.getUpdateTime()))
                 .addValue("accept_code", session.getAcceptCode());
         return jdbc.update(sqlAttachDevice, pSrc) > 0;
     }

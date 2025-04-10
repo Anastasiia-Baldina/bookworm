@@ -1,4 +1,4 @@
-package org.vse.bookworm.rest;
+package org.vse.bookworm.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

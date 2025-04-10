@@ -68,7 +68,7 @@ public class ShardSessionService implements SessionService {
                     .setSessionId(session.getId());
         } else {
             return new RegisterDeviceResponseDto()
-                    .setErrorMessage("Неверный проверочный код или код пользователя");
+                    .setErrorMessage("Неверный проверочный код");
         }
     }
 }

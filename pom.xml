@@ -104,6 +104,11 @@
                 <artifactId>curator-framework</artifactId>
                 <version>${apache-curator.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${apache-curator.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>
