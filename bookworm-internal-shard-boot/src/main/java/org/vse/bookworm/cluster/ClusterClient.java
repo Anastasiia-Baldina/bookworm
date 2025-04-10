@@ -7,7 +7,7 @@ import org.apache.curator.retry.RetryForever;
 import org.apache.zookeeper.CreateMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vse.bookworm.dto.internal.HostInfoDto;
+import org.vse.bookworm.dto.internal.ShardHostDto;
 import org.vse.bookworm.properties.ClusterProperties;
 import org.vse.bookworm.utils.Json;
 
@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 public class ClusterClient implements Closeable {
     private static final Logger log = LoggerFactory.getLogger(ClusterClient.class);
     private final CuratorFramework curator;
-    private final HostInfoDto data;
+    private final ShardHostDto data;
 
     public ClusterClient(ClusterProperties cfg) {
         data = createData(cfg);
@@ -36,12 +36,11 @@ public class ClusterClient implements Closeable {
         curator.start();
     }
 
-    private HostInfoDto createData(ClusterProperties cfg) {
+    private ShardHostDto createData(ClusterProperties cfg) {
         try {
             var host = InetAddress.getLocalHost().getHostName();
             int port = cfg.getServicePort();
-            var node = "/cluster/" + host + "_" + port;
-            return new HostInfoDto()
+            return new ShardHostDto()
                     .setHost(host)
                     .setPort(port)
                     .setShardNum(cfg.getShard());
@@ -54,7 +53,7 @@ public class ClusterClient implements Closeable {
         try {
             var node = "/cluster/" + data.getHost() + "_" + data.getPort();
             var nodeEntry = Json.toJson(data);
-            var zkNode = curator.create()
+            curator.create()
                     .creatingParentContainersIfNeeded()
                     .withMode(CreateMode.EPHEMERAL)
                     .forPath(node, nodeEntry.getBytes(StandardCharsets.UTF_8));

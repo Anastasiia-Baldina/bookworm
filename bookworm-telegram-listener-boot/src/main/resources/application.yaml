@@ -5,8 +5,8 @@ telegram-listener:
   max-poll-time-secs: 1
 kafka:
   topics:
-    'FileMessage': 'income_file'
-    'TextMessage': 'income_message'
+    'FileMessageDto': 'income_file'
+    'TextMessageDto': 'income_message'
   common:
     "[bootstrap.servers]": " 172.24.92.220:9092"
   producer:

@@ -20,14 +20,14 @@ public class SessionController implements SessionService {
         this.sessionService = sessionService;
     }
 
-    @PostMapping(value = "/*/login", produces = "application/json")
+    @PostMapping(value = "/login", produces = "application/json")
     @ResponseBody
     @Override
     public LoginResponseDto login(@RequestBody LoginRequestDto request) {
         return sessionService.login(request);
     }
 
-    @PostMapping(value = "/*/register_device", produces = "application/json")
+    @PostMapping(value = "/register_device", produces = "application/json")
     @ResponseBody
     @Override
     public RegisterDeviceResponseDto registerDevice(@RequestBody RegisterDeviceRequestDto request) {

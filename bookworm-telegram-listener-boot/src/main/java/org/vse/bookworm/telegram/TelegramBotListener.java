@@ -2,7 +2,6 @@ package org.vse.bookworm.telegram;
 
 import com.google.gson.Gson;
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.model.Document;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
@@ -18,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.vse.bookworm.dto.kafka.FileMessageDto;
 import org.vse.bookworm.kafka.KafkaDataSender;
 import org.vse.bookworm.telegram.properties.TelegramListenerProperties;
-import org.vse.bookworm.telegram.utils.TlgDto;
+import org.vse.bookworm.telegram.utils.TlgUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,13 +110,13 @@ public class TelegramBotListener implements AutoCloseable {
             Message updMsg = upd.message();
             if (updMsg.text() != null) {
                 var rsp = bot.execute(new GetChatMember(updMsg.chat().id(), updMsg.from().id()));
-                return new WrappedFuture<>(upd, msgSender.send(TlgDto.textMessage(upd)));
+                return new WrappedFuture<>(upd, msgSender.send(TlgUtils.textMessage(upd)));
             } else if(updMsg.document() != null) {
                 Document doc = updMsg.document();
                 if(doc.fileName() != null) {
                     GetFile rqFile = new GetFile(doc.fileId());
                     GetFileResponse rsFile = bot.execute(rqFile);
-                    FileMessageDto fileMsg = TlgDto.fileMessage(upd, rsFile.file());
+                    FileMessageDto fileMsg = TlgUtils.fileMessage(upd, rsFile.file());
                     return new WrappedFuture<>(upd, msgSender.send(fileMsg));
                 }
             }

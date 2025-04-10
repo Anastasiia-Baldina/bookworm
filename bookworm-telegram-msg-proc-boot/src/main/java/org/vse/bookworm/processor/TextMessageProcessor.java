@@ -55,14 +55,22 @@ public class TextMessageProcessor {
     }
 
     private TextResponseDto processMessage(TextMessageDto msg) {
-        var text = msg.getText();
-        if (text.startsWith("/")) {
-            var txtCmd = extractCommandText(text);
+        var textParts = msg.getText().split(" ");
+        if (textParts.length > 0 && textParts[0].startsWith("/")) {
+            var txtCmd = textParts[0];
             var cmd = Command.ofText(txtCmd);
+            long chatId = msg.getChat().getId();
             if (cmd == null) {
-                return unknownCommand(txtCmd, msg.getChat().getId());
+                return unknownCommand(txtCmd, chatId);
             }
-            return cmdHandlers.get(cmd).handle(msg);
+            if (cmd.argCount() >= textParts.length) {
+                return mismatchArguments(cmd, chatId);
+            }
+            String[] args = new String[cmd.argCount()];
+            for (int i = 1; i < cmd.argCount(); i++) {
+                args[i - 1] = textParts[i];
+            }
+            return cmdHandlers.get(cmd).handle(msg, args);
         }
         return null;
     }
@@ -77,16 +85,22 @@ public class TextMessageProcessor {
     }
 
     private static TextResponseDto unknownCommand(String txtCmd, long chatId) {
-        var commands = Command.values();
-        List<String> lines = new ArrayList<>(commands.length + 2);
-        lines.add("Неизвестная команда: " + txtCmd + '\n');
-        lines.add("Доступные команды:\n");
-        for (var cmd : commands) {
-            lines.add(cmd.text() + ' ' + cmd.info());
-        }
+        String text = "Неизвестная команда: " + txtCmd + '\n' +
+                "/start - для вывода списка команд";
         return TextResponseDto.builder()
                 .setChatId(chatId)
-                .setText(String.join("\n", lines))
+                .setText(String.join("\n", text))
+                .setAffinityKey(chatId)
+                .build();
+    }
+
+    private static TextResponseDto mismatchArguments(Command cmd, long chatId) {
+        String text = "Некорректный формат команды.\n" +
+                "Пример использования:\n" +
+                cmd.usage();
+        return TextResponseDto.builder()
+                .setChatId(chatId)
+                .setText(String.join("\n", text))
                 .setAffinityKey(chatId)
                 .build();
     }

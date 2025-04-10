@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vse.bookworm.dto.internal.HostInfoDto;
+import org.vse.bookworm.dto.internal.ShardHostDto;
 import org.vse.bookworm.properties.ClusterProperties;
 import org.vse.bookworm.utils.Json;
 import org.vse.bookworm.utils.Partitioner;
@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ShardRouter implements Router, CuratorCacheListener, Closeable {
     private static final Logger log = LoggerFactory.getLogger(ShardRouter.class);
+    private static final String CLUSTER_DIR = "/cluster";
     private final Partitioner afnFunc;
     private final Map<Integer, List<Host>> shards = new ConcurrentHashMap<>();
     private final Map<Integer, AtomicInteger> counters = new HashMap<>();
@@ -51,7 +52,7 @@ public class ShardRouter implements Router, CuratorCacheListener, Closeable {
                 .retryPolicy(new RetryForever(5_000))
                 .build();
         curator.start();
-        clusterCache = CuratorCache.build(curator, "/cluster");
+        clusterCache = CuratorCache.build(curator, CLUSTER_DIR);
         clusterCache.listenable()
                 .addListener(this);
         clusterCache.start();
@@ -67,12 +68,17 @@ public class ShardRouter implements Router, CuratorCacheListener, Closeable {
         } else if (shardHosts.isEmpty()) {
             throw new IllegalStateException("No hosts for shard=" + shardId);
         }
-        int count = Math.abs(counters.get(shardId).incrementAndGet());
+
         int size = shardHosts.size();
-        if (count >= size) {
-            return shardHosts.get(count % (size - 1));
+        if (size == 1) {
+            return shardHosts.getFirst();
         } else {
-            return shardHosts.get((size - 1) % count);
+            int count = Math.abs(counters.get(shardId).incrementAndGet());
+            if (count >= size) {
+                return shardHosts.get(count % (size - 1));
+            } else {
+                return shardHosts.get((size - 1) % count);
+            }
         }
     }
 
@@ -86,16 +92,16 @@ public class ShardRouter implements Router, CuratorCacheListener, Closeable {
     public void event(Type type, ChildData oldData, ChildData data) {
         switch (type) {
             case NODE_CHANGED:
-                log.info("Node {}, event: {}", oldData.getPath(), type);
+                log.info("Node {} changed", oldData.getPath());
                 removeNode(oldData);
                 addNode(data);
                 break;
             case NODE_DELETED:
-                log.info("Node {}, event: {}", oldData.getPath(), type);
+                log.info("Node {} deleted", oldData.getPath());
                 removeNode(oldData);
                 break;
             case NODE_CREATED:
-                log.info("Node {}, event: {}", data.getPath(), type);
+                log.info("Node {} created", data.getPath());
                 addNode(data);
                 break;
         }
@@ -135,9 +141,11 @@ public class ShardRouter implements Router, CuratorCacheListener, Closeable {
     }
 
     @Nullable
-    private static HostInfoDto extractData(ChildData data) {
-        if (data != null && data.getPath().startsWith("/cluster/") && data.getData() != null) {
-            return Json.fromJson(new String(data.getData()), HostInfoDto.class);
+    private static ShardHostDto extractData(ChildData data) {
+        if (data != null
+                && data.getPath().startsWith(CLUSTER_DIR + "/")
+                && data.getData() != null) {
+            return Json.fromJson(new String(data.getData()), ShardHostDto.class);
         }
         return null;
     }

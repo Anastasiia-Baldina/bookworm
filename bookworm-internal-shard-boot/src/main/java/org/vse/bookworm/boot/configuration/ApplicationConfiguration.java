@@ -9,6 +9,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.vse.bookworm.cluster.ClusterClient;
+import org.vse.bookworm.controller.SubscriptionController;
 import org.vse.bookworm.properties.ClusterProperties;
 import org.vse.bookworm.properties.DbProperties;
 import org.vse.bookworm.properties.SessionProperties;
@@ -24,7 +25,9 @@ import org.vse.bookworm.repository.postgres.PostgresSubscriberRepository;
 import org.vse.bookworm.repository.postgres.PostgresUserBookRepository;
 import org.vse.bookworm.controller.SessionController;
 import org.vse.bookworm.service.SessionService;
+import org.vse.bookworm.service.SubscriptionService;
 import org.vse.bookworm.service.impl.ShardSessionService;
+import org.vse.bookworm.service.impl.ShardSubscriptionService;
 import org.vse.bookworm.utils.IdGenerator;
 
 import javax.sql.DataSource;
@@ -120,5 +123,15 @@ public class ApplicationConfiguration {
     @Bean
     SessionController sessionController() {
         return new SessionController(sessionService());
+    }
+
+    @Bean
+    SubscriptionService subscriptionService() {
+        return new ShardSubscriptionService(subscriberRepository());
+    }
+
+    @Bean
+    SubscriptionController subscriptionController() {
+        return new SubscriptionController(subscriptionService());
     }
 }

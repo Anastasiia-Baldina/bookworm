@@ -10,6 +10,8 @@ public interface SubscriberRepository {
 
     boolean delete(Subscriber subscriber);
 
+    boolean delete(long userId, String chatName);
+
     Collection<Subscriber> findByUserId(long userId);
 
     Collection<Subscriber> findByChatId(long chatId);

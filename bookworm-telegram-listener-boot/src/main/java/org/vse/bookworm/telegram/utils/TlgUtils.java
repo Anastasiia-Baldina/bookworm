@@ -10,8 +10,8 @@ import org.vse.bookworm.dto.kafka.TextMessageDto;
 import org.vse.bookworm.dto.kafka.UserDto;
 import org.vse.bookworm.utils.Asserts;
 
-public final class TlgDto {
-    private TlgDto() {
+public final class TlgUtils {
+    private TlgUtils() {
     }
 
     @NotNull

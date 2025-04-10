@@ -16,6 +16,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.vse.bookworm.service.Router;
 
 import java.net.URI;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/book-worm")
@@ -29,12 +31,15 @@ public class InternalFacadeController {
         this.restTemplate = restTemplate;
     }
 
-    @PostMapping(value = "/{id}/**", produces = "application/json")
-    public ResponseEntity<byte[]> proxy(@PathVariable("id") long id, RequestEntity<byte[]> request) {
+    @PostMapping(value = "/{affinityKey}/**", produces = "application/json")
+    public ResponseEntity<byte[]> proxy(@PathVariable("affinityKey") long affinityKey, RequestEntity<byte[]> request) {
         try {
-            var host = router.route(id);
+            var host = router.route(affinityKey);
+            var remotePath = "/book-worm/" + Stream.of(request.getUrl().getPath().split("/"))
+                    .skip(3)
+                    .collect(Collectors.joining("/"));
             URI uri = UriComponentsBuilder.fromUriString(host.endpoint())
-                    .path(request.getUrl().getPath())
+                    .path(remotePath)
                     .query(request.getUrl().getRawQuery())
                     .build()
                     .toUri();

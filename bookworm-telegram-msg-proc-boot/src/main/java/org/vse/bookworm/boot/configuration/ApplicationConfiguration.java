@@ -1,12 +1,16 @@
 package org.vse.bookworm.boot.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
+import org.vse.bookworm.kafka.FacadeProperties;
 import org.vse.bookworm.kafka.KafkaTextMessageListener;
 import org.vse.bookworm.kafka.KafkaTextResponseProducer;
-import org.vse.bookworm.kafka.properties.KafkaListenerProperties;
-import org.vse.bookworm.kafka.properties.KafkaProducerProperties;
+import org.vse.bookworm.properties.KafkaListenerProperties;
+import org.vse.bookworm.properties.KafkaProducerProperties;
 import org.vse.bookworm.processor.TextMessageProcessor;
 import org.vse.bookworm.processor.cmd.CmdLoginHandler;
 import org.vse.bookworm.processor.cmd.CmdStartHandler;
@@ -16,6 +20,8 @@ import java.util.List;
 
 @Configuration
 public class ApplicationConfiguration {
+    @Autowired
+    private RestTemplateBuilder restTemplateBuilder;
 
     @Bean
     @ConfigurationProperties(prefix = "kafka-text-response")
@@ -30,8 +36,19 @@ public class ApplicationConfiguration {
     }
 
     @Bean
+    @ConfigurationProperties(prefix = "facade")
+    FacadeProperties facadeProperties() {
+        return new FacadeProperties();
+    }
+
+    @Bean
     KafkaTextResponseProducer kafkaTextResponseProducer() {
         return new KafkaTextResponseProducer(kafkaResponseProducerProperties());
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return restTemplateBuilder.build();
     }
 
     @Bean
@@ -41,7 +58,7 @@ public class ApplicationConfiguration {
 
     @Bean
     CommandHandler logingCommandHandler() {
-        return new CmdLoginHandler();
+        return new CmdLoginHandler(facadeProperties(), restTemplate());
     }
 
     @Bean

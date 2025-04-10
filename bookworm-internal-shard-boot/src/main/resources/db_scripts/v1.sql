@@ -45,10 +45,11 @@ create index if not exists book_chat_id_index on book(chat_id);
 create table if not exists chat_subscriber
 (
 	chat_id				numeric(32)		not null,	-- идентификатор группы в Telegram
+	chat_name           varchar(256)    not null,   -- имя Telegram-группы
 	user_id				numeric(32)		not null	-- идентификатор пользователя в Telegram
 );
 create index if not exists chat_subscriber_chat_id_index on chat_subscriber(chat_id);
-create index if not exists chat_subscriber_user_id_index on chat_subscriber(user_id);
+create index if not exists chat_subscriber_user_id_index on chat_subscriber(user_id, chat_name);
 
 -- сообщения Telegram-группы
 create table if not exists chat_message

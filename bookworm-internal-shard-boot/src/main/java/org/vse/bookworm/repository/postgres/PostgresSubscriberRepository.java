@@ -14,14 +14,19 @@ import java.util.Collection;
 public class PostgresSubscriberRepository implements SubscriberRepository {
     private static final String sqlInsert =
             "insert into chat_subscriber" +
-                    "   (chat_id, user_id)" +
+                    "   (chat_id, user_id, chat_name)" +
                     " values" +
-                    "   (:chat_id, :user_id)";
+                    "   (:chat_id, :user_id, :chat_name)";
     private static final String sqlDelete =
             "delete from chat_subscriber" +
                     " where" +
                     "   chat_id = :chat_id" +
                     "   and user_id = :user_id";
+    private static final String sqlDeleteByChatName =
+            "delete from chat_subscriber" +
+                    " where" +
+                    "   user_id = :user_id" +
+                    "   and chat_name = :chat_name";
     private static final String sqlFindByUserId =
             "select" +
                     "   *" +
@@ -46,7 +51,8 @@ public class PostgresSubscriberRepository implements SubscriberRepository {
     public void create(Subscriber subscriber) {
         var pSrc = new MapSqlParameterSource()
                 .addValue("chat_id", subscriber.getChatId())
-                .addValue("user_id", subscriber.getUserId());
+                .addValue("user_id", subscriber.getUserId())
+                .addValue("chat_name", subscriber.getChatName());
         jdbc.update(sqlInsert, pSrc);
     }
 
@@ -55,6 +61,14 @@ public class PostgresSubscriberRepository implements SubscriberRepository {
         var pSrc = new MapSqlParameterSource()
                 .addValue("chat_id", subscriber.getChatId())
                 .addValue("user_id", subscriber.getUserId());
+        return jdbc.update(sqlDelete, pSrc) > 0;
+    }
+
+    @Override
+    public boolean delete(long userId, String chatName) {
+        var pSrc = new MapSqlParameterSource()
+                .addValue("chat_name", chatName)
+                .addValue("user_id", userId);
         return jdbc.update(sqlDelete, pSrc) > 0;
     }
 
@@ -78,6 +92,7 @@ public class PostgresSubscriberRepository implements SubscriberRepository {
             return Subscriber.builder()
                     .setChatId(rs.getLong("chat_id"))
                     .setUserId(rs.getLong("user_id"))
+                    .setChatName(rs.getString("chat_name"))
                     .build();
         }
     }

@@ -10,32 +10,36 @@ public class LoginRequestDto {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public LoginRequestDto setUserId(long userId) {
         this.userId = userId;
+        return this;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public LoginRequestDto setFirstName(String firstName) {
         this.firstName = firstName;
+        return this;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public LoginRequestDto setLastName(String lastName) {
         this.lastName = lastName;
+        return this;
     }
 
     public String getUserName() {
         return userName;
     }
 
-    public void setUserName(String userName) {
+    public LoginRequestDto setUserName(String userName) {
         this.userName = userName;
+        return this;
     }
 
     @Override

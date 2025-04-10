@@ -1,6 +1,6 @@
 package org.vse.bookworm.dto.internal;
 
-public class HostInfoDto {
+public class ShardHostDto {
     private String host;
     private int port;
     private int shardNum;
@@ -9,7 +9,7 @@ public class HostInfoDto {
         return host;
     }
 
-    public HostInfoDto setHost(String host) {
+    public ShardHostDto setHost(String host) {
         this.host = host;
         return this;
     }
@@ -18,7 +18,7 @@ public class HostInfoDto {
         return shardNum;
     }
 
-    public HostInfoDto setShardNum(int shardNum) {
+    public ShardHostDto setShardNum(int shardNum) {
         this.shardNum = shardNum;
         return this;
     }
@@ -27,7 +27,7 @@ public class HostInfoDto {
         return port;
     }
 
-    public HostInfoDto setPort(int port) {
+    public ShardHostDto setPort(int port) {
         this.port = port;
         return this;
     }
