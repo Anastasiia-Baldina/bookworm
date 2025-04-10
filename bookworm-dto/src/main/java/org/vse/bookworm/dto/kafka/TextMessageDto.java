@@ -9,6 +9,7 @@ public class TextMessageDto implements Partitioned {
     private UserDto sender;
     private ChatDto chat;
     private long affinityKey;
+    private boolean joined;
 
     public long getMessageId() {
         return messageId;
@@ -50,27 +51,37 @@ public class TextMessageDto implements Partitioned {
         this.chat = chat;
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    @Override
-    public String toString() {
-        return "TextMessage{" +
-                "messageId=" + messageId +
-                ", text='" + text + '\'' +
-                ", date=" + date +
-                ", sender=" + sender +
-                ", chat=" + chat +
-                '}';
-    }
-
     public long getAffinityKey() {
         return affinityKey;
     }
 
     public void setAffinityKey(long affinityKey) {
         this.affinityKey = affinityKey;
+    }
+
+    public void setJoined(boolean joined) {
+        this.joined = joined;
+    }
+
+    public boolean isJoined() {
+        return joined;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    @Override
+    public String toString() {
+        return "TextMessageDto{" +
+                "messageId=" + messageId +
+                ", text='" + text + '\'' +
+                ", date=" + date +
+                ", sender=" + sender +
+                ", chat=" + chat +
+                ", affinityKey=" + affinityKey +
+                ", joined=" + isJoined() +
+                '}';
     }
 
     public static class Builder {
@@ -80,6 +91,7 @@ public class TextMessageDto implements Partitioned {
         private UserDto sender;
         private ChatDto chat;
         private long affinityKey;
+        private boolean joined;
 
         public TextMessageDto build() {
             TextMessageDto msg = new TextMessageDto();
@@ -89,7 +101,7 @@ public class TextMessageDto implements Partitioned {
             msg.setSender(sender);
             msg.setChat(chat);
             msg.setAffinityKey(affinityKey);
-
+            msg.setJoined(joined);
             return msg;
         }
 
@@ -120,6 +132,11 @@ public class TextMessageDto implements Partitioned {
 
         public Builder setAffinityKey(long affinityKey) {
             this.affinityKey = affinityKey;
+            return this;
+        }
+
+        public Builder setJoined(boolean joined) {
+            this.joined = joined;
             return this;
         }
     }

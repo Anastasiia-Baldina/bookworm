@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/book_reader_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/catalog_item_selector"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@string/icon_back_desc"
+            app:srcCompat="@drawable/ic_arrow_left" />
+
+        <TextView
+            android:id="@+id/book_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false"
+            android:text="djhsdf sdfhskdfg jshdgfjs df jdshgfjsdhf sjdfgh  hdsfgsdjfgh" />
+    </LinearLayout>
+
+    <ru.vse.bookworm.ui.reader.ReaderWebView
+        android:id="@+id/book_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ru.vse.bookworm.ui.reader.ReaderWebView>
+</LinearLayout>

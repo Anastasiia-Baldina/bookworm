@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Книгочей</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Книгочей</string>
+    <string name="nav_header_subtitle">t.me/book_worm_chat_bot</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_sync">Обновить данные</string>
+
+    <string name="menu_login">Синхронизация</string>
+    <string name="menu_catalog">Мои книги</string>
+    <!-- Strings related to login -->
+    <string name="prompt_user_id">Код пользователя</string>
+    <string name="prompt_accept_code">Код подтверждения</string>
+    <string name="login_failed">"Login failed"</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="delete_book">Удалить книгу?</string>
+    <string name="yes_delete">Удалить</string>
+    <string name="book_cover">book cover</string>
+    <string name="author_unknown">Неизвестный автор</string>
+    <string name="icon_back_desc">back</string>
+    <string name="book_from_file">Добавить книгу</string>
+    <string name="signin_btn_label">Войти</string>
+    <string name="signin_help_label">Введите команду /login в Telegram-боте t.me/book_worm_chat_bot для получения кода пользователя</string>
+</resources>

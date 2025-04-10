@@ -12,7 +12,7 @@ public enum Command {
     LOGIN("/login", "Выслать код входа в приложение", false, 0, "/login"),
     LOGOUT("/logout", "Выйти из приложения", false, 0, "/logout"),
     SUBSCRIBE("/subscribe", "Подписаться к группе", false, 1,
-            "/subscribe https://t.me/testmybotkyrsach"),
+            "/subscribe https://t.me/testmybotkyrsach\n/subscribe t.me/testmybotkyrsach\n/subscribe testmybotkyrsach"),
     UNSUBSCRIBE("/unsubscribe", "Отписаться от группы", false, 1,
             "/unsubscribe https://t.me/testmybotkyrsach"),
     BUILD("/build", "Собрать сообщения в книгу fb2", true, 1,

@@ -1,3 +1,4 @@
+token-id: '7781761396:AAEvBwGqFqwQfLpQhPkG8y8luYwvnyO4ZPs'
 kafka-text-message:
   topic: 'income_message'
   delayOnErrorMillis: 1_000

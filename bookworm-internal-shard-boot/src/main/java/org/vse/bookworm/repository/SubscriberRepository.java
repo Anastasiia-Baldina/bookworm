@@ -6,7 +6,7 @@ import java.util.Collection;
 
 public interface SubscriberRepository {
 
-    void create(Subscriber subscriber);
+    void save(Subscriber subscriber);
 
     boolean delete(Subscriber subscriber);
 

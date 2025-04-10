@@ -61,3 +61,12 @@ create table if not exists chat_message
 	message				jsonb			not null	-- сообщение в формате json
 );
 create unique index if not exists chat_message_primary_key on chat_message(chat_id, message_id);
+
+-- Идентификаторы Telegram-групп
+create table if not exists chat
+(
+    chat_id				numeric(32)		not null,	-- идентификатор группы в Telegram
+    chat_name           varchar(256)    not null,   -- имя Telegram-группы
+);
+create unique index if not exists chat_chat_id_index on chat(chat_id);
+create index if not exists chat_chat_name_index on chat(chat_name);

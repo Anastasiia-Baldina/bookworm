@@ -3,11 +3,13 @@ package org.vse.bookworm.processor;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vse.bookworm.dto.internal.JoinChatRequestDto;
 import org.vse.bookworm.dto.kafka.TextMessageDto;
 import org.vse.bookworm.dto.kafka.TextResponseDto;
 import org.vse.bookworm.kafka.KafkaTextResponseProducer;
 import org.vse.bookworm.processor.cmd.Command;
 import org.vse.bookworm.processor.cmd.CommandHandler;
+import org.vse.bookworm.rest.FacadeClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +22,14 @@ public class TextMessageProcessor {
     private static final Logger log = LoggerFactory.getLogger(TextMessageProcessor.class);
     private final Map<Command, CommandHandler> cmdHandlers;
     private final KafkaTextResponseProducer kafka;
+    private final FacadeClient facadeClient;
 
     public TextMessageProcessor(List<CommandHandler> cmdHandlers,
-                                KafkaTextResponseProducer kafkaTextResponseProducer) {
+                                KafkaTextResponseProducer kafkaTextResponseProducer, FacadeClient facadeClient) {
         this.cmdHandlers = cmdHandlers.stream()
                 .collect(Collectors.toMap(CommandHandler::command, x -> x));
         this.kafka = kafkaTextResponseProducer;
+        this.facadeClient = facadeClient;
     }
 
     public void process(List<TextMessageDto> msgList) {
@@ -55,22 +59,37 @@ public class TextMessageProcessor {
     }
 
     private TextResponseDto processMessage(TextMessageDto msg) {
-        var textParts = msg.getText().split(" ");
-        if (textParts.length > 0 && textParts[0].startsWith("/")) {
-            var txtCmd = textParts[0];
-            var cmd = Command.ofText(txtCmd);
-            long chatId = msg.getChat().getId();
-            if (cmd == null) {
-                return unknownCommand(txtCmd, chatId);
+        if (msg.isJoined()) {
+            var chat = msg.getChat();
+            if (chat != null) {
+                var joinRq = new JoinChatRequestDto()
+                        .setChatId(chat.getId())
+                        .setChatName(chat.getUserName());
+                var joinRsp = facadeClient.joinChat(joinRq);
+                if (joinRsp.isSuccess()) {
+                    log.info("Bot added to chat id={}, username={}, name={}",
+                            chat.getId(), chat.getUserName(), chat.getFirstName());
+                    return cmdHandlers.get(Command.START).handle(msg, new String[]{});
+                }
             }
-            if (cmd.argCount() >= textParts.length) {
-                return mismatchArguments(cmd, chatId);
+        } else if (!msg.getText().isBlank()) {
+            var textParts = msg.getText().split(" ");
+            if (textParts.length > 0 && textParts[0].startsWith("/")) {
+                var txtCmd = textParts[0];
+                var cmd = Command.ofText(txtCmd);
+                long chatId = msg.getChat().getId();
+                if (cmd == null) {
+                    return unknownCommand(txtCmd, chatId);
+                }
+                if (cmd.argCount() >= textParts.length) {
+                    return mismatchArguments(cmd, chatId);
+                }
+                String[] args = new String[cmd.argCount()];
+                if (cmd.argCount() - 1 >= 0) {
+                    System.arraycopy(textParts, 1, args, 0, cmd.argCount());
+                }
+                return cmdHandlers.get(cmd).handle(msg, args);
             }
-            String[] args = new String[cmd.argCount()];
-            for (int i = 1; i < cmd.argCount(); i++) {
-                args[i - 1] = textParts[i];
-            }
-            return cmdHandlers.get(cmd).handle(msg, args);
         }
         return null;
     }

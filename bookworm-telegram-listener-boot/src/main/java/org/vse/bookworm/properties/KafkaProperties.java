@@ -1,4 +1,4 @@
-package org.vse.bookworm.kafka.properties;
+package org.vse.bookworm.properties;
 
 import java.util.Map;
 

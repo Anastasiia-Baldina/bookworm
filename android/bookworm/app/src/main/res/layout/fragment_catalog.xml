@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/catalog_item_selector">
+
+    <com.daimajia.swipe.SwipeLayout
+        android:id="@+id/book_swipe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/catalog_item_selector"
+        swipe:leftEdgeSwipeOffset="0dp"
+        swipe:rightEdgeSwipeOffset="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/material_dynamic_neutral80"
+            android:gravity="center"
+            android:tag="Bottom3"
+            android:weightSum="10">
+
+            <ImageView
+                android:id="@+id/trash"
+                android:layout_width="27dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_catalog_delete" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/delete_book"
+                android:textColor="@color/black"
+                android:textSize="17sp" />
+
+            <Button
+                android:id="@+id/btn_book_delete"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="4"
+                android:background="#ffffff"
+                android:text="@string/yes_delete"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/book_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/catalog_item_selector"
+            android:elevation="5dp"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/book_cover"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:contentDescription="@string/book_cover" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="0dp">
+
+                <TextView
+                    android:id="@+id/book_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:text="@string/author_unknown"
+                    android:textAppearance="?attr/textAppearanceListItem" />
+
+                <TextView
+                    android:id="@+id/book_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:textAppearance="?attr/textAppearanceListItem" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="0dp">
+
+                    <TextView
+                        android:id="@+id/book_progress"
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:textAppearance="?attr/textAppearanceListItem" />
+
+                    <TextView
+                        android:id="@+id/book_source"
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:textAppearance="?attr/textAppearanceListItem" />
+                </LinearLayout>
+
+            </LinearLayout>
+            <!--GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/catalog_item_selector"
+                android:columnCount="2"
+                android:rowCount="1">
+
+                <TextView
+                    android:id="@+id/book_cover"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_row="0"
+                    android:layout_rowSpan="3"
+                    android:layout_column="0"
+                    android:layout_margin="5dp" />
+
+                <TextView
+                    android:layout_columnWeight="1"
+                    android:id="@+id/book_author"
+                    android:layout_width="match_parent"
+                    android:layout_row="0"
+                    android:layout_column="1"
+                    android:layout_margin="5dp"
+                    android:text="Неизвестный автор"
+                    android:textAppearance="?attr/textAppearanceListItem" />
+
+                <TextView
+                    android:layout_gravity="fill"
+                    android:layout_columnWeight="1"
+                    android:id="@+id/book_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_row="1"
+                    android:layout_column="1"
+                    android:layout_columnSpan="2"
+                    android:layout_margin="5dp"
+                    android:singleLine="false"
+                    android:text="bla-bla-bla-bla-bla-bla-bla-bla-bla-bla-bla-bla-bla-bla-bla-bla-bla-bla"
+                    android:textAppearance="?attr/textAppearanceListItem" />
+
+
+                <TextView
+                    android:layout_columnWeight="1"
+                    android:id="@+id/book_progress"
+                    android:layout_width="50dp"
+                    android:layout_row="2"
+                    android:layout_column="1"
+                    android:text="100%"
+                    android:textAppearance="?attr/textAppearanceListItem" />
+
+                <TextView
+                    android:layout_gravity="fill"
+                    android:layout_columnWeight="2"
+                    android:id="@+id/book_source"
+                    android:layout_width="match_parent"
+                    android:layout_row="2"
+                    android:layout_column="2"
+                    android:text="Telegram channel"
+                    android:textAppearance="?attr/textAppearanceListItem" />
+            </GridLayout-->
+        </LinearLayout>
+    </com.daimajia.swipe.SwipeLayout>
+</LinearLayout>

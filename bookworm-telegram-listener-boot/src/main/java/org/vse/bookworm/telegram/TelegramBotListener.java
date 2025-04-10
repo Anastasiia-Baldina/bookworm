@@ -5,7 +5,6 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Document;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.GetUpdates;
 import com.pengrad.telegrambot.response.GetFileResponse;
@@ -16,11 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vse.bookworm.dto.kafka.FileMessageDto;
 import org.vse.bookworm.kafka.KafkaDataSender;
-import org.vse.bookworm.telegram.properties.TelegramListenerProperties;
+import org.vse.bookworm.properties.TelegramListenerProperties;
 import org.vse.bookworm.telegram.utils.TlgUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -108,16 +108,24 @@ public class TelegramBotListener implements AutoCloseable {
         log.info(GSON.toJson(upd));
         try {
             Message updMsg = upd.message();
-            if (updMsg.text() != null) {
-                var rsp = bot.execute(new GetChatMember(updMsg.chat().id(), updMsg.from().id()));
-                return new WrappedFuture<>(upd, msgSender.send(TlgUtils.textMessage(upd)));
-            } else if(updMsg.document() != null) {
-                Document doc = updMsg.document();
-                if(doc.fileName() != null) {
-                    GetFile rqFile = new GetFile(doc.fileId());
-                    GetFileResponse rsFile = bot.execute(rqFile);
-                    FileMessageDto fileMsg = TlgUtils.fileMessage(upd, rsFile.file());
-                    return new WrappedFuture<>(upd, msgSender.send(fileMsg));
+            if(updMsg != null) {
+                if (updMsg.text() != null) {
+                    //var rsp = bot.execute(new GetChatMember(updMsg.chat().id(), updMsg.from().id()));
+                    return new WrappedFuture<>(upd, msgSender.send(TlgUtils.textMessage(upd)));
+                } else if (updMsg.document() != null) {
+                    Document doc = updMsg.document();
+                    if (doc.fileName() != null) {
+                        GetFile rqFile = new GetFile(doc.fileId());
+                        GetFileResponse rsFile = bot.execute(rqFile);
+                        FileMessageDto fileMsg = TlgUtils.fileMessage(upd, rsFile.file());
+                        return new WrappedFuture<>(upd, msgSender.send(fileMsg));
+                    }
+                } else if(updMsg.newChatMembers() != null) {
+                    for(var newUser : updMsg.newChatMembers()) {
+                        if(newUser.isBot() && Objects.equals(newUser.username(), cfg.getSelfUsername())) {
+                            return new WrappedFuture<>(upd, msgSender.send(TlgUtils.joinMessage(upd)));
+                        }
+                    }
                 }
             }
         } catch (Exception e) {

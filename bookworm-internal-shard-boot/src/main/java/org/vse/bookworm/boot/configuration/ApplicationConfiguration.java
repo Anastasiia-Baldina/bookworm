@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -13,16 +12,8 @@ import org.vse.bookworm.controller.SubscriptionController;
 import org.vse.bookworm.properties.ClusterProperties;
 import org.vse.bookworm.properties.DbProperties;
 import org.vse.bookworm.properties.SessionProperties;
-import org.vse.bookworm.repository.BookRepository;
-import org.vse.bookworm.repository.ChatMessageRepository;
-import org.vse.bookworm.repository.SessionRepository;
-import org.vse.bookworm.repository.SubscriberRepository;
-import org.vse.bookworm.repository.UserBookRepository;
-import org.vse.bookworm.repository.postgres.PostgresBookRepository;
-import org.vse.bookworm.repository.postgres.PostgresChatMsgRepository;
-import org.vse.bookworm.repository.postgres.PostgresSessionRepository;
-import org.vse.bookworm.repository.postgres.PostgresSubscriberRepository;
-import org.vse.bookworm.repository.postgres.PostgresUserBookRepository;
+import org.vse.bookworm.repository.*;
+import org.vse.bookworm.repository.postgres.*;
 import org.vse.bookworm.controller.SessionController;
 import org.vse.bookworm.service.SessionService;
 import org.vse.bookworm.service.SubscriptionService;
@@ -111,6 +102,11 @@ public class ApplicationConfiguration {
     }
 
     @Bean
+    ChatRepository chatRepository() {
+        return new PostgresChatRepository(namedParameterJdbcTemplate());
+    }
+
+    @Bean
     IdGenerator idGenerator() {
         return IdGenerator.forUuid();
     }
@@ -127,7 +123,7 @@ public class ApplicationConfiguration {
 
     @Bean
     SubscriptionService subscriptionService() {
-        return new ShardSubscriptionService(subscriberRepository());
+        return new ShardSubscriptionService(subscriberRepository(), chatRepository());
     }
 
     @Bean

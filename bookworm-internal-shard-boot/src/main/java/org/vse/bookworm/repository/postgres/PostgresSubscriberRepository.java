@@ -41,6 +41,20 @@ public class PostgresSubscriberRepository implements SubscriberRepository {
                     "   chat_subscriber" +
                     " where" +
                     "   chat_id = :chat_id";
+    private static final String sqlGet =
+            "select" +
+                    "   *" +
+                    " from" +
+                    "   chat_subscriber" +
+                    " where" +
+                    "   chat_id = :chat_id" +
+                    "   and user_id = :user_id";
+    private static final String sqlUpdate =
+            "update chat_subscriber set" +
+                    "   chat_name = :chat_name" +
+                    " where" +
+                    "   chat_id = :chat_id" +
+                    "   and user_id = :user_id";
     private final NamedParameterJdbcTemplate jdbc;
 
     public PostgresSubscriberRepository(NamedParameterJdbcTemplate jdbc) {
@@ -48,12 +62,16 @@ public class PostgresSubscriberRepository implements SubscriberRepository {
     }
 
     @Override
-    public void create(Subscriber subscriber) {
+    public void save(Subscriber subscriber) {
         var pSrc = new MapSqlParameterSource()
                 .addValue("chat_id", subscriber.getChatId())
                 .addValue("user_id", subscriber.getUserId())
                 .addValue("chat_name", subscriber.getChatName());
-        jdbc.update(sqlInsert, pSrc);
+        if(jdbc.query(sqlGet, pSrc, SubscriberRowMapper.INSTANCE).isEmpty()) {
+            jdbc.update(sqlInsert, pSrc);
+        } else {
+            jdbc.update(sqlUpdate, pSrc);
+        }
     }
 
     @Override
@@ -69,7 +87,7 @@ public class PostgresSubscriberRepository implements SubscriberRepository {
         var pSrc = new MapSqlParameterSource()
                 .addValue("chat_name", chatName)
                 .addValue("user_id", userId);
-        return jdbc.update(sqlDelete, pSrc) > 0;
+        return jdbc.update(sqlDeleteByChatName, pSrc) > 0;
     }
 
     @Override

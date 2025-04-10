@@ -50,6 +50,8 @@ public class ShardRouter implements Router, CuratorCacheListener, Closeable {
                                 .build()
                 )
                 .retryPolicy(new RetryForever(5_000))
+                .sessionTimeoutMs(15_000)
+                .connectionTimeoutMs(15_000)
                 .build();
         curator.start();
         clusterCache = CuratorCache.build(curator, CLUSTER_DIR);

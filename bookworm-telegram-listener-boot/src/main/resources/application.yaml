@@ -3,6 +3,7 @@ telegram-listener:
   delay-on-error-millis: 1_000
   max-poll-size: 10
   max-poll-time-secs: 1
+  self-username: book_worm_chat_bot
 kafka:
   topics:
     'FileMessageDto': 'income_file'

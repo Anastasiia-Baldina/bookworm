@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vse.bookworm.kafka.KafkaDataSender;
 import org.vse.bookworm.kafka.TopicResolver;
-import org.vse.bookworm.kafka.properties.KafkaProperties;
+import org.vse.bookworm.properties.KafkaProperties;
 import org.vse.bookworm.telegram.TelegramBotListener;
-import org.vse.bookworm.telegram.properties.TelegramListenerProperties;
+import org.vse.bookworm.properties.TelegramListenerProperties;
 
 @Configuration
 public class ApplicationConfiguration {

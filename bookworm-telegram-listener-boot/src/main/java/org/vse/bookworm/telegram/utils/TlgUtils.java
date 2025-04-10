@@ -28,6 +28,20 @@ public final class TlgUtils {
     }
 
     @NotNull
+    public static TextMessageDto joinMessage(@NotNull Update upd) {
+        var msg = Asserts.notNull(upd.message(), "Update.message");
+        var chat = chat(msg);
+        return TextMessageDto.builder()
+                .setJoined(true)
+                .setText(msg.text())
+                .setChat(chat(msg))
+                .setSender(user(msg))
+                .setMessageId(msg.messageId())
+                .setAffinityKey(chat.getId())
+                .build();
+    }
+
+    @NotNull
     public static FileMessageDto fileMessage(@NotNull Update upd, @NotNull File file) {
         var msg = Asserts.notNull(upd.message(), "Update.message");
         var doc = Asserts.notNull(msg.document(), "Update.message.document");

@@ -1,6 +1,8 @@
 package org.vse.bookworm.boot.configuration;
 
+import com.pengrad.telegrambot.TelegramBot;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -9,12 +11,14 @@ import org.springframework.web.client.RestTemplate;
 import org.vse.bookworm.kafka.FacadeProperties;
 import org.vse.bookworm.kafka.KafkaTextMessageListener;
 import org.vse.bookworm.kafka.KafkaTextResponseProducer;
+import org.vse.bookworm.processor.cmd.CmdSubscribeHandler;
 import org.vse.bookworm.properties.KafkaListenerProperties;
 import org.vse.bookworm.properties.KafkaProducerProperties;
 import org.vse.bookworm.processor.TextMessageProcessor;
 import org.vse.bookworm.processor.cmd.CmdLoginHandler;
 import org.vse.bookworm.processor.cmd.CmdStartHandler;
 import org.vse.bookworm.processor.cmd.CommandHandler;
+import org.vse.bookworm.rest.FacadeClient;
 
 import java.util.List;
 
@@ -22,6 +26,13 @@ import java.util.List;
 public class ApplicationConfiguration {
     @Autowired
     private RestTemplateBuilder restTemplateBuilder;
+    @Value("${token-id}")
+    private String tokenId;
+
+    @Bean
+    TelegramBot telegramBot() {
+        return new TelegramBot(tokenId);
+    }
 
     @Bean
     @ConfigurationProperties(prefix = "kafka-text-response")
@@ -58,7 +69,17 @@ public class ApplicationConfiguration {
 
     @Bean
     CommandHandler logingCommandHandler() {
-        return new CmdLoginHandler(facadeProperties(), restTemplate());
+        return new CmdLoginHandler(facadeClient());
+    }
+
+    @Bean
+    FacadeClient facadeClient() {
+        return new FacadeClient(facadeProperties(), restTemplate());
+    }
+
+    @Bean
+    CommandHandler cmdSubscribeHandler() {
+        return new CmdSubscribeHandler(facadeClient(), telegramBot());
     }
 
     @Bean
@@ -66,9 +87,11 @@ public class ApplicationConfiguration {
         return new TextMessageProcessor(
                 List.of(
                         startCommandHandler(),
-                        logingCommandHandler()
+                        logingCommandHandler(),
+                        cmdSubscribeHandler()
                 ),
-                kafkaTextResponseProducer()
+                kafkaTextResponseProducer(),
+                facadeClient()
         );
     }
 

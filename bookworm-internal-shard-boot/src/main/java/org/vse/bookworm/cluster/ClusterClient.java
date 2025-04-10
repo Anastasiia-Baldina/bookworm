@@ -1,6 +1,7 @@
 package org.vse.bookworm.cluster;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryForever;
@@ -32,6 +33,8 @@ public class ClusterClient implements Closeable {
                                 .build()
                 )
                 .retryPolicy(new RetryForever(5_000))
+                .sessionTimeoutMs(15_000)
+                .connectionTimeoutMs(15_000)
                 .build();
         curator.start();
     }

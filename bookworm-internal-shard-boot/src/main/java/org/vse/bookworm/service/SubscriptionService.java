@@ -1,8 +1,12 @@
 package org.vse.bookworm.service;
 
-import org.vse.bookworm.dto.internal.SubscribeRequestDto;
-import org.vse.bookworm.dto.internal.SubscribeResponseDto;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.vse.bookworm.dto.internal.*;
 
 public interface SubscriptionService {
     SubscribeResponseDto subscribe(SubscribeRequestDto requestDto);
+
+    JoinChatResponseDto addChat(JoinChatRequestDto requestDto);
+
+    ChatResponseDto findChat(ChatRequestDto requestDto);
 }

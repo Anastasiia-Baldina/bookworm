@@ -1,7 +1,7 @@
 package org.vse.bookworm.kafka;
 
 import org.jetbrains.annotations.NotNull;
-import org.vse.bookworm.kafka.properties.KafkaProperties;
+import org.vse.bookworm.properties.KafkaProperties;
 import org.vse.bookworm.utils.Asserts;
 
 import java.util.Map;
