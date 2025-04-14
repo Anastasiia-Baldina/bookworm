@@ -1,9 +1,12 @@
 package org.vse.bookworm.processor;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vse.bookworm.dto.internal.JoinChatRequestDto;
+import org.vse.bookworm.dto.internal.ChatJoinRequestDto;
+import org.vse.bookworm.dto.internal.MessageSaveRequestDto;
 import org.vse.bookworm.dto.kafka.TextMessageDto;
 import org.vse.bookworm.dto.kafka.TextResponseDto;
 import org.vse.bookworm.kafka.KafkaTextResponseProducer;
@@ -35,15 +38,20 @@ public class TextMessageProcessor {
     public void process(List<TextMessageDto> msgList) {
         List<Future<RecordMetadata>> ftrList = new ArrayList<>();
         for (var msg : msgList) {
+            TextResponseDto rsp = null;
             try {
                 log.info("Income message: {}", msg);
-                TextResponseDto rsp = processMessage(msg);
-                if (rsp != null) {
-                    log.info("Response: {}", rsp);
-                    ftrList.add(kafka.send(rsp));
-                }
+                rsp = processMessage(msg);
             } catch (Exception e) {
                 log.error("Failed to process message. messageId={}", msg.getMessageId(), e);
+            }
+            if (rsp != null) {
+                try {
+                    log.info("Response: {}", rsp);
+                    ftrList.add(kafka.send(rsp));
+                } catch (Exception e) {
+                    log.error("Failed to process message. messageId={}", msg.getMessageId(), e);
+                }
             }
         }
         ftrList.forEach(f -> {
@@ -59,10 +67,10 @@ public class TextMessageProcessor {
     }
 
     private TextResponseDto processMessage(TextMessageDto msg) {
-        if (msg.isJoined()) {
+        if (msg.isJoinRequest()) {
             var chat = msg.getChat();
             if (chat != null) {
-                var joinRq = new JoinChatRequestDto()
+                var joinRq = new ChatJoinRequestDto()
                         .setChatId(chat.getId())
                         .setChatName(chat.getUserName());
                 var joinRsp = facadeClient.joinChat(joinRq);
@@ -73,8 +81,9 @@ public class TextMessageProcessor {
                 }
             }
         } else if (!msg.getText().isBlank()) {
-            var textParts = msg.getText().split(" ");
-            if (textParts.length > 0 && textParts[0].startsWith("/")) {
+            var msgText = msg.getText();
+            if (msgText.startsWith("/")) {
+                var textParts = msgText.split(" ");
                 var txtCmd = textParts[0];
                 var cmd = Command.ofText(txtCmd);
                 long chatId = msg.getChat().getId();
@@ -89,18 +98,38 @@ public class TextMessageProcessor {
                     System.arraycopy(textParts, 1, args, 0, cmd.argCount());
                 }
                 return cmdHandlers.get(cmd).handle(msg, args);
+            } else if (msgText.startsWith("#")) {
+                var category = extractTextCategory(msgText);
+                if (category != null) {
+                    var text = msgText.substring(category.length() + 1);
+                    facadeClient.saveMessage(new MessageSaveRequestDto()
+                            .setMessage(text)
+                            .setCategory(category)
+                            .setUsername(msg.getSender().getUserName())
+                            .setChatId(msg.getChat().getId())
+                            .setMessageId(msg.getMessageId()));
+                }
             }
         }
         return null;
     }
 
-    private String extractCommandText(String text) {
+    @Nullable
+    private static String extractTextCategory(@Nonnull String text) {
         int spacePos = text.indexOf(' ');
-        if (spacePos == -1) {
-            return text;
-        } else {
-            return text.substring(0, spacePos - 1);
+        int lfPos = text.indexOf('\n');
+        int pos;
+        if (spacePos == -1 && lfPos == -1) {
+            return null;
         }
+        if (spacePos == -1) {
+            pos = lfPos;
+        } else if (lfPos == -1) {
+            pos = spacePos;
+        } else {
+            pos = Math.min(lfPos, spacePos);
+        }
+        return text.substring(0, pos);
     }
 
     private static TextResponseDto unknownCommand(String txtCmd, long chatId) {

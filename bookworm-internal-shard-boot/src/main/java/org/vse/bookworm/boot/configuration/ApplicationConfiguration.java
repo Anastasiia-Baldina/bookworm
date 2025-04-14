@@ -8,6 +8,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.vse.bookworm.cluster.ClusterClient;
+import org.vse.bookworm.controller.BookController;
+import org.vse.bookworm.controller.ChatMessageController;
 import org.vse.bookworm.controller.SubscriptionController;
 import org.vse.bookworm.properties.ClusterProperties;
 import org.vse.bookworm.properties.DbProperties;
@@ -15,8 +17,12 @@ import org.vse.bookworm.properties.SessionProperties;
 import org.vse.bookworm.repository.*;
 import org.vse.bookworm.repository.postgres.*;
 import org.vse.bookworm.controller.SessionController;
+import org.vse.bookworm.service.BookService;
+import org.vse.bookworm.service.ChatMessageService;
 import org.vse.bookworm.service.SessionService;
 import org.vse.bookworm.service.SubscriptionService;
+import org.vse.bookworm.service.impl.ShardBookService;
+import org.vse.bookworm.service.impl.ShardChatMessageService;
 import org.vse.bookworm.service.impl.ShardSessionService;
 import org.vse.bookworm.service.impl.ShardSubscriptionService;
 import org.vse.bookworm.utils.IdGenerator;
@@ -129,5 +135,25 @@ public class ApplicationConfiguration {
     @Bean
     SubscriptionController subscriptionController() {
         return new SubscriptionController(subscriptionService());
+    }
+
+    @Bean
+    ChatMessageService chatMessageService() {
+        return new ShardChatMessageService(chatMessageRepository());
+    }
+
+    @Bean
+    ChatMessageController chatMessageController() {
+        return new ChatMessageController(chatMessageService());
+    }
+
+    @Bean
+    BookService bookService() {
+        return new ShardBookService(bookRepository(), subscriberRepository());
+    }
+
+    @Bean
+    BookController bookController() {
+        return new BookController(bookService());
     }
 }

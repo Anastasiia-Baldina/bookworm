@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.vse.bookworm.dto.internal.*;
-import org.vse.bookworm.service.SessionService;
 import org.vse.bookworm.service.SubscriptionService;
 import org.vse.bookworm.utils.Json;
 
@@ -37,7 +36,7 @@ public class SubscriptionController implements SubscriptionService {
     @Override
     @PostMapping(value = "/add_chat", produces = "application/json")
     @ResponseBody
-    public JoinChatResponseDto addChat(@RequestBody JoinChatRequestDto requestDto) {
+    public ChatJoinResponseDto addChat(@RequestBody ChatJoinRequestDto requestDto) {
         log.info("Request: /add_chat {}", Json.toJson(requestDto));
         return service.addChat(requestDto);
     }

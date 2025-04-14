@@ -4,8 +4,8 @@ import org.vse.bookworm.dao.Chat;
 import org.vse.bookworm.dao.Subscriber;
 import org.vse.bookworm.dto.internal.ChatRequestDto;
 import org.vse.bookworm.dto.internal.ChatResponseDto;
-import org.vse.bookworm.dto.internal.JoinChatRequestDto;
-import org.vse.bookworm.dto.internal.JoinChatResponseDto;
+import org.vse.bookworm.dto.internal.ChatJoinRequestDto;
+import org.vse.bookworm.dto.internal.ChatJoinResponseDto;
 import org.vse.bookworm.dto.internal.SubscribeRequestDto;
 import org.vse.bookworm.dto.internal.SubscribeResponseDto;
 import org.vse.bookworm.dto.internal.UnsubscribeRequestDto;
@@ -38,10 +38,10 @@ public class ShardSubscriptionService implements SubscriptionService {
     }
 
     @Override
-    public JoinChatResponseDto addChat(JoinChatRequestDto requestDto) {
+    public ChatJoinResponseDto addChat(ChatJoinRequestDto requestDto) {
         var chat = new Chat(requestDto.getChatId(), requestDto.getChatName());
         chatRepository.save(chat);
-        return new JoinChatResponseDto()
+        return new ChatJoinResponseDto()
                 .setSuccess(true);
     }
 

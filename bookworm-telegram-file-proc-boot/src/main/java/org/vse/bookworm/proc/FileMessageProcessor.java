@@ -2,12 +2,15 @@ package org.vse.bookworm.proc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vse.bookworm.dto.internal.BookSaveRequestDto;
 import org.vse.bookworm.dto.kafka.FileMessageDto;
 import org.vse.bookworm.dto.kafka.TextResponseDto;
 import org.vse.bookworm.kafka.KafkaTextResponseProducer;
 import org.vse.bookworm.parser.JaxbFb2Parser;
-import org.vse.bookworm.proc.properties.ProcessorProperties;
+import org.vse.bookworm.properties.ProcessorProperties;
+import org.vse.bookworm.rest.FacadeClient;
 import org.vse.bookworm.utils.Asserts;
+import org.vse.bookworm.utils.Gzip;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,13 +26,16 @@ public class FileMessageProcessor {
     private final String uriTemplate;
     private final int maxFileSize;
     private final KafkaTextResponseProducer kafka;
+    private final FacadeClient facadeClient;
 
     public FileMessageProcessor(ProcessorProperties cfg,
-                                KafkaTextResponseProducer kafkaTextResponseProducer) {
+                                KafkaTextResponseProducer kafkaTextResponseProducer,
+                                FacadeClient facadeClient) {
         this.uriTemplate = TOKEN_TEMPLATE.replace(
                 "#TOKEN", Asserts.notEmpty(cfg.getTelegramTokenId(), "telegramTokenId"));
         this.maxFileSize = cfg.getMaxFileSize();
         this.kafka = kafkaTextResponseProducer;
+        this.facadeClient = facadeClient;
     }
 
     public void process(List<FileMessageDto> msgList) {
@@ -50,8 +56,19 @@ public class FileMessageProcessor {
         } else {
             try {
                 var url = URI.create(uriTemplate.replace("#FILEPATH", msg.getPath())).toURL();
-                //var fileEntry = readTextFile(url.openStream());
-                var fBook = JaxbFb2Parser.getInstance().parse(url.openStream());
+                var fileEntry = readTextFile(url.openStream());
+                var fBook = JaxbFb2Parser.getInstance().parse(fileEntry);
+                var bookId = msg.getChat().getId() + "-" + msg.getFilename();
+                var rsp = facadeClient.saveBook(new BookSaveRequestDto()
+                        .setBookId(bookId)
+                        .setBookVersion(fileEntry.hashCode())
+                        .setFileBase64(Gzip.compressToBase64(fileEntry))
+                        .setChatId(msg.getChat().getId()));
+                if(rsp.isSuccess()) {
+                    for(var userId : rsp.getUserIds()) {
+
+                    }
+                }
                 sendResponse(msg, "Файл " + msg.getFilename() + "обработан");
             } catch (Exception e) {
                 log.error("Failed to process file: messageId={}", msg.getMessageId(), e);
@@ -62,7 +79,7 @@ public class FileMessageProcessor {
 
     private static String readTextFile(InputStream is) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
-        try(var reader = new BufferedReader(new InputStreamReader(is))) {
+        try (var reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line).append("\n");

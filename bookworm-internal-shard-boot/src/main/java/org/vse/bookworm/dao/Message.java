@@ -1,10 +1,13 @@
 package org.vse.bookworm.dao;
 
-import org.vse.bookworm.utils.Json;
-
 public class Message {
     private final String imageBse64;
     private final String text;
+
+    private Message() {
+        imageBse64 = null;
+        text = null;
+    }
 
     private Message(Builder b) {
         this.imageBse64 = b.imageBse64;
@@ -19,15 +22,7 @@ public class Message {
         return text;
     }
 
-    public String getJson() {
-        return Json.toJson(this);
-    }
-
-    public static Message fromJson(String json) {
-        return Json.fromJson(json, Message.class);
-    }
-
-    public static Builder build() {
+    public static Builder builder() {
         return new Builder();
     }
 

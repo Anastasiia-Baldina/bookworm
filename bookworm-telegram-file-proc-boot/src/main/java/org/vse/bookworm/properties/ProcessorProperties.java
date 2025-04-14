@@ -1,4 +1,4 @@
-package org.vse.bookworm.proc.properties;
+package org.vse.bookworm.properties;
 
 public class ProcessorProperties {
     private String telegramTokenId;

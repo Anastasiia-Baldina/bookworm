@@ -1,6 +1,6 @@
 package org.vse.bookworm.dto.internal;
 
-public class JoinChatRequestDto {
+public class ChatJoinRequestDto {
     private long chatId;
     private String chatName;
 
@@ -8,7 +8,7 @@ public class JoinChatRequestDto {
         return chatId;
     }
 
-    public JoinChatRequestDto setChatId(long chatId) {
+    public ChatJoinRequestDto setChatId(long chatId) {
         this.chatId = chatId;
         return this;
     }
@@ -17,7 +17,7 @@ public class JoinChatRequestDto {
         return chatName;
     }
 
-    public JoinChatRequestDto setChatName(String chatName) {
+    public ChatJoinRequestDto setChatName(String chatName) {
         this.chatName = chatName;
         return this;
     }

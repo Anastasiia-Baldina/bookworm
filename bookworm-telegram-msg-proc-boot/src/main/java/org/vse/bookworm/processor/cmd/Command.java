@@ -11,10 +11,10 @@ public enum Command {
     START("/start", "Список команд", true, 0, "/start"),
     LOGIN("/login", "Выслать код входа в приложение", false, 0, "/login"),
     LOGOUT("/logout", "Выйти из приложения", false, 0, "/logout"),
-    SUBSCRIBE("/subscribe", "Подписаться к группе", false, 1,
+    SUBSCRIBE("/subscribe", "Подписаться на рассылку группы", false, 1,
             "/subscribe https://t.me/testmybotkyrsach\n/subscribe t.me/testmybotkyrsach\n/subscribe testmybotkyrsach"),
-    UNSUBSCRIBE("/unsubscribe", "Отписаться от группы", false, 1,
-            "/unsubscribe https://t.me/testmybotkyrsach"),
+    UNSUBSCRIBE("/unsubscribe", "Отписаться от рассылки группы", false, 1,
+            "/unsubscribe https://t.me/testmybotkyrsach\n/unsubscribe t.me/testmybotkyrsach\n/unsubscribe testmybotkyrsach"),
     BUILD("/build", "Собрать сообщения в книгу fb2", true, 1,
             "/build #хештэг\n#хештэг - хештэг, указанный в сообщениях, по которому собирается книга.");
 

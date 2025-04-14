@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.vse.bookworm.dao.ChatMessage;
 import org.vse.bookworm.dao.Message;
 import org.vse.bookworm.repository.ChatMessageRepository;
+import org.vse.bookworm.utils.Json;
 
 import javax.annotation.Nonnull;
 import java.sql.ResultSet;
@@ -17,7 +18,7 @@ public class PostgresChatMsgRepository implements ChatMessageRepository {
             "insert into chat_message" +
                     "(" +
                     "   chat_id," +
-                    "   username" +
+                    "   username," +
                     "   message_id," +
                     "   message," +
                     "   category" +
@@ -25,25 +26,45 @@ public class PostgresChatMsgRepository implements ChatMessageRepository {
                     " values" +
                     "(" +
                     "   :chat_id," +
-                    "   :username" +
+                    "   :username," +
                     "   :message_id," +
-                    "   :message," +
+                    "   :message::jsonb," +
                     "   :category" +
                     ")";
+    private static final String sqlUpdate =
+            "update chat_message set" +
+                    "   message = :message::jsonb," +
+                    "   category = :category," +
+                    "   username = :username" +
+                    " where" +
+                    "   chat_id = :chat_id" +
+                    "   and message_id = :message_id";
+    private static final String sqlGet =
+            "select" +
+                    "    *" +
+                    " from " +
+                    "   chat_message" +
+                    " where" +
+                    "   chat_id = :chat_id" +
+                    "   and message_id = :message_id";
     private static final String sqlList =
             "select" +
                     "   *" +
                     " from" +
                     "   chat_massage" +
                     " where" +
-                    "   category = :category";
+                    "   category = :category" +
+                    "   and chat_id = :chat_id" +
+                    "   and message_id >= :message_id" +
+                    " limit" +
+                    "   :limit";
     private static final String sqlDelete =
             "delete" +
                     " from" +
                     "   chat_message" +
                     " where" +
                     "   chat_id = :chat_id" +
-                    "   message_id = :message_id";
+                    "   and message_id = :message_id";
     private final NamedParameterJdbcTemplate jdbc;
 
     public PostgresChatMsgRepository(NamedParameterJdbcTemplate jdbc) {
@@ -51,14 +72,17 @@ public class PostgresChatMsgRepository implements ChatMessageRepository {
     }
 
     @Override
-    public void insert(ChatMessage chatMsg) {
+    public void save(ChatMessage chatMsg) {
         var pSrc = new MapSqlParameterSource()
                 .addValue("chat_id", chatMsg.getChatId())
                 .addValue("message_id", chatMsg.getMessageId())
                 .addValue("category", chatMsg.getCategory())
-                .addValue("message", chatMsg.getMessage().getJson())
+                .addValue("message", Json.toJson(chatMsg.getMessage()))
                 .addValue("username", chatMsg.getUsername());
-        jdbc.update(sqlInsert, pSrc);
+        var sql = jdbc.query(sqlGet, pSrc,ChatMsgRowMapper.INSTANCE).isEmpty()
+                ? sqlInsert
+                : sqlUpdate;
+        jdbc.update(sql, pSrc);
     }
 
     @Override
@@ -70,10 +94,15 @@ public class PostgresChatMsgRepository implements ChatMessageRepository {
     }
 
     @Override
-    public Collection<ChatMessage> list(long chatId, String category) {
+    public Collection<ChatMessage> list(long chatId,
+                                        String category,
+                                        long messageId,
+                                        int limit) {
         var pSrc = new MapSqlParameterSource()
                 .addValue("chat_id", chatId)
-                .addValue("category", category);
+                .addValue("category", category)
+                .addValue("message_id", messageId)
+                .addValue("limit", limit);
         return jdbc.query(sqlList, pSrc, ChatMsgRowMapper.INSTANCE);
     }
 
@@ -87,7 +116,7 @@ public class PostgresChatMsgRepository implements ChatMessageRepository {
                     .setCategory(rs.getString("category"))
                     .setUsername(rs.getString("username"))
                     .setMessageId(rs.getLong("message_id"))
-                    .setMessage(Message.fromJson(rs.getString("message")))
+                    .setMessage(Json.fromJson(rs.getString("message"), Message.class))
                     .build();
         }
     }

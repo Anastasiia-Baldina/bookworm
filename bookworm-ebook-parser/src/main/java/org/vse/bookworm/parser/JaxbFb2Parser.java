@@ -7,6 +7,7 @@ import org.jaxb.fb2.FictionBook;
 import org.vse.bookworm.parser.exception.IllegalFb2FormatException;
 
 import java.io.InputStream;
+import java.io.StringReader;
 
 public class JaxbFb2Parser {
     private static final Unmarshaller UNMARSHALLER;
@@ -23,6 +24,18 @@ public class JaxbFb2Parser {
             UNMARSHALLER = context.createUnmarshaller();
         } catch (JAXBException e) {
             throw new IllegalStateException("JAXB unmarshaller not initialized.", e);
+        }
+    }
+
+    public FictionBook parse(String entry) {
+        try {
+            Object res = UNMARSHALLER.unmarshal(new StringReader(entry));
+            if(res instanceof FictionBook fictionBook) {
+                return fictionBook;
+            }
+            throw new IllegalFb2FormatException();
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
         }
     }
 

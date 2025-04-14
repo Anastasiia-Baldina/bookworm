@@ -7,7 +7,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.vse.bookworm.dto.kafka.TextResponseDto;
 import org.vse.bookworm.dto.kafka.utils.UDto;
-import org.vse.bookworm.kafka.properties.KafkaProducerProperties;
+import org.vse.bookworm.properties.KafkaProducerProperties;
 import org.vse.bookworm.utils.Asserts;
 
 import java.util.HashMap;

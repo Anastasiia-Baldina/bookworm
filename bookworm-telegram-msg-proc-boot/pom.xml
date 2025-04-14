@@ -78,7 +78,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>org.vse.bookworm.boot.BootMsgProc</mainClass>
+                    <mainClass>org.vse.bookworm.boot.BootTgMsgProc</mainClass>
                     <addResources>true</addResources>
                 </configuration>
                 <executions>

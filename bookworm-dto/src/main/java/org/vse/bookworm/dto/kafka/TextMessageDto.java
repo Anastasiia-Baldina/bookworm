@@ -9,7 +9,8 @@ public class TextMessageDto implements Partitioned {
     private UserDto sender;
     private ChatDto chat;
     private long affinityKey;
-    private boolean joined;
+    private boolean joinRequest;
+    private boolean edited;
 
     public long getMessageId() {
         return messageId;
@@ -59,12 +60,20 @@ public class TextMessageDto implements Partitioned {
         this.affinityKey = affinityKey;
     }
 
-    public void setJoined(boolean joined) {
-        this.joined = joined;
+    public void setJoinRequest(boolean joinRequest) {
+        this.joinRequest = joinRequest;
     }
 
-    public boolean isJoined() {
-        return joined;
+    public boolean isJoinRequest() {
+        return joinRequest;
+    }
+
+    public boolean isEdited() {
+        return edited;
+    }
+
+    public void setEdited(boolean edited) {
+        this.edited = edited;
     }
 
     public static Builder builder() {
@@ -80,7 +89,7 @@ public class TextMessageDto implements Partitioned {
                 ", sender=" + sender +
                 ", chat=" + chat +
                 ", affinityKey=" + affinityKey +
-                ", joined=" + isJoined() +
+                ", joined=" + isJoinRequest() +
                 '}';
     }
 
@@ -91,7 +100,8 @@ public class TextMessageDto implements Partitioned {
         private UserDto sender;
         private ChatDto chat;
         private long affinityKey;
-        private boolean joined;
+        private boolean joinRequest;
+        private boolean edited;
 
         public TextMessageDto build() {
             TextMessageDto msg = new TextMessageDto();
@@ -101,7 +111,7 @@ public class TextMessageDto implements Partitioned {
             msg.setSender(sender);
             msg.setChat(chat);
             msg.setAffinityKey(affinityKey);
-            msg.setJoined(joined);
+            msg.setJoinRequest(joinRequest);
             return msg;
         }
 
@@ -135,8 +145,13 @@ public class TextMessageDto implements Partitioned {
             return this;
         }
 
-        public Builder setJoined(boolean joined) {
-            this.joined = joined;
+        public Builder setJoinRequest(boolean joinRequest) {
+            this.joinRequest = joinRequest;
+            return this;
+        }
+
+        public Builder setEdited(boolean edited) {
+            this.edited = edited;
             return this;
         }
     }

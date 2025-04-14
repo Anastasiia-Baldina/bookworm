@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.vse.bookworm.dto.kafka.FileMessageDto;
 import org.vse.bookworm.kafka.KafkaDataSender;
 import org.vse.bookworm.properties.TelegramListenerProperties;
-import org.vse.bookworm.telegram.utils.TlgUtils;
+import org.vse.bookworm.telegram.utils.TgUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,25 +108,27 @@ public class TelegramBotListener implements AutoCloseable {
         log.info(GSON.toJson(upd));
         try {
             Message updMsg = upd.message();
+            Message edMsg = upd.editedMessage();
             if(updMsg != null) {
                 if (updMsg.text() != null) {
-                    //var rsp = bot.execute(new GetChatMember(updMsg.chat().id(), updMsg.from().id()));
-                    return new WrappedFuture<>(upd, msgSender.send(TlgUtils.textMessage(upd)));
+                    return new WrappedFuture<>(upd, msgSender.send(TgUtils.textMessage(upd)));
                 } else if (updMsg.document() != null) {
                     Document doc = updMsg.document();
                     if (doc.fileName() != null) {
                         GetFile rqFile = new GetFile(doc.fileId());
                         GetFileResponse rsFile = bot.execute(rqFile);
-                        FileMessageDto fileMsg = TlgUtils.fileMessage(upd, rsFile.file());
+                        FileMessageDto fileMsg = TgUtils.fileMessage(upd, rsFile.file());
                         return new WrappedFuture<>(upd, msgSender.send(fileMsg));
                     }
                 } else if(updMsg.newChatMembers() != null) {
                     for(var newUser : updMsg.newChatMembers()) {
                         if(newUser.isBot() && Objects.equals(newUser.username(), cfg.getSelfUsername())) {
-                            return new WrappedFuture<>(upd, msgSender.send(TlgUtils.joinMessage(upd)));
+                            return new WrappedFuture<>(upd, msgSender.send(TgUtils.joinMessage(upd)));
                         }
                     }
                 }
+            } else if(edMsg != null && edMsg.text() != null) {
+                return new WrappedFuture<>(upd, msgSender.send(TgUtils.editedMessage(upd)));
             }
         } catch (Exception e) {
             log.error("Failed process message, updateId={}", upd.updateId(), e);

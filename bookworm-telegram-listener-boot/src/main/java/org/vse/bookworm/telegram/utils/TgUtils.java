@@ -10,8 +10,8 @@ import org.vse.bookworm.dto.kafka.TextMessageDto;
 import org.vse.bookworm.dto.kafka.UserDto;
 import org.vse.bookworm.utils.Asserts;
 
-public final class TlgUtils {
-    private TlgUtils() {
+public final class TgUtils {
+    private TgUtils() {
     }
 
     @NotNull
@@ -28,11 +28,25 @@ public final class TlgUtils {
     }
 
     @NotNull
+    public static TextMessageDto editedMessage(@NotNull Update upd) {
+        var msg = Asserts.notNull(upd.editedMessage(), "Update.message");
+        var chat = chat(msg);
+        return TextMessageDto.builder()
+                .setText(msg.text())
+                .setChat(chat(msg))
+                .setSender(user(msg))
+                .setMessageId(msg.messageId())
+                .setAffinityKey(chat.getId())
+                .setEdited(true)
+                .build();
+    }
+
+    @NotNull
     public static TextMessageDto joinMessage(@NotNull Update upd) {
         var msg = Asserts.notNull(upd.message(), "Update.message");
         var chat = chat(msg);
         return TextMessageDto.builder()
-                .setJoined(true)
+                .setJoinRequest(true)
                 .setText(msg.text())
                 .setChat(chat(msg))
                 .setSender(user(msg))

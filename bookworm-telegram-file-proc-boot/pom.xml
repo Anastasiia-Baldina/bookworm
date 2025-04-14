@@ -36,6 +36,10 @@
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
         </dependency>
@@ -69,7 +73,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>org.vse.bookworm.boot.BootFileProc</mainClass>
+                    <mainClass>org.vse.bookworm.boot.BootTgFileProc</mainClass>
                     <addResources>true</addResources>
                 </configuration>
                 <executions>

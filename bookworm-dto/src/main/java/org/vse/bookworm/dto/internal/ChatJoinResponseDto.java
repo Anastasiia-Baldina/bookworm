@@ -1,6 +1,6 @@
 package org.vse.bookworm.dto.internal;
 
-public class JoinChatResponseDto {
+public class ChatJoinResponseDto {
     private boolean success;
     private String errorMessage;
 
@@ -8,7 +8,7 @@ public class JoinChatResponseDto {
         return success;
     }
 
-    public JoinChatResponseDto setSuccess(boolean success) {
+    public ChatJoinResponseDto setSuccess(boolean success) {
         this.success = success;
         return this;
     }
@@ -17,7 +17,7 @@ public class JoinChatResponseDto {
         return errorMessage;
     }
 
-    public JoinChatResponseDto setErrorMessage(String errorMessage) {
+    public ChatJoinResponseDto setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
         return this;
     }
