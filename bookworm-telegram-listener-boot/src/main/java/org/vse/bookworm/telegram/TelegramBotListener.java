@@ -80,7 +80,7 @@ public class TelegramBotListener implements AutoCloseable {
         List<WrappedFuture<Update, RecordMetadata>> ftrList = new ArrayList<>(updates.size());
         updates.forEach(u -> {
             var ftr = processUpdate(u);
-            if(ftr == null) {
+            if (ftr == null) {
                 log.info("Inapplicable message with updateId={}", u.updateId());
             } else {
                 ftrList.add(ftr);
@@ -90,7 +90,7 @@ public class TelegramBotListener implements AutoCloseable {
             try {
                 Update upd = ftr.get();
                 RecordMetadata meta = ftr.unwrapResult();
-                if(meta != null) {
+                if (meta != null) {
                     log.info("Kafka commited: updateId={},topic={},p={},ofs={}",
                             upd.updateId(), meta.topic(), meta.partition(), meta.offset());
                 }
@@ -109,7 +109,7 @@ public class TelegramBotListener implements AutoCloseable {
         try {
             Message updMsg = upd.message();
             Message edMsg = upd.editedMessage();
-            if(updMsg != null) {
+            if (updMsg != null) {
                 if (updMsg.text() != null) {
                     return new WrappedFuture<>(upd, msgSender.send(TgUtils.textMessage(upd)));
                 } else if (updMsg.document() != null) {
@@ -120,14 +120,14 @@ public class TelegramBotListener implements AutoCloseable {
                         FileMessageDto fileMsg = TgUtils.fileMessage(upd, rsFile.file());
                         return new WrappedFuture<>(upd, msgSender.send(fileMsg));
                     }
-                } else if(updMsg.newChatMembers() != null) {
-                    for(var newUser : updMsg.newChatMembers()) {
-                        if(newUser.isBot() && Objects.equals(newUser.username(), cfg.getSelfUsername())) {
+                } else if (updMsg.newChatMembers() != null) {
+                    for (var newUser : updMsg.newChatMembers()) {
+                        if (newUser.isBot() && Objects.equals(newUser.username(), cfg.getSelfUsername())) {
                             return new WrappedFuture<>(upd, msgSender.send(TgUtils.joinMessage(upd)));
                         }
                     }
                 }
-            } else if(edMsg != null && edMsg.text() != null) {
+            } else if (edMsg != null && edMsg.text() != null) {
                 return new WrappedFuture<>(upd, msgSender.send(TgUtils.editedMessage(upd)));
             }
         } catch (Exception e) {

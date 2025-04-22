@@ -5,7 +5,6 @@ import static androidx.core.content.ContextCompat.startActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +23,9 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import java.util.List;
 
 import ru.vse.bookworm.R;
-import ru.vse.bookworm.db.DatabaseHelper;
+import ru.vse.bookworm.db.DbHelper;
 import ru.vse.bookworm.repository.BookRepository;
-import ru.vse.bookworm.repository.DbBookRepository;
+import ru.vse.bookworm.repository.sqlite.DbBookRepository;
 import ru.vse.bookworm.book.BookInfo;
 import ru.vse.bookworm.ui.reader.ReaderActivity;
 import ru.vse.bookworm.utils.Json;
@@ -38,7 +37,7 @@ public class CatalogViewAdapter extends RecyclerSwipeAdapter<CatalogViewAdapter.
 
     public CatalogViewAdapter(Context context) {
         this.context = context;
-        bookRepository = new DbBookRepository(DatabaseHelper.getInstance(context));
+        bookRepository = new DbBookRepository(DbHelper.getInstance(context));
         bookInfos = bookRepository.list();
     }
 

@@ -17,7 +17,15 @@ public interface BookRepository {
 
     List<BookInfo> list();
 
-    void markAsDeleted(String id);
+    BookInfo get(String bookId);
+
+    void markAsDeleted(String bookId);
+
+    void delete(String bookId);
+
+    void saveProgress(BookInfo bookInfo);
+
+    List<BookInfo> listMarked();
 
     int getCount();
 }

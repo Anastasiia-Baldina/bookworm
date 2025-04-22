@@ -1,5 +1,7 @@
 package ru.vse.bookworm.book;
 
+import android.os.Build;
+
 import java.time.Instant;
 
 public class BookInfo {
@@ -11,6 +13,8 @@ public class BookInfo {
     private final String tgGroup;
     private final int version;
     private final int currentChapter;
+    private final long chatId;
+    private final double position;
 
     private BookInfo(Builder b) {
         id = b.id;
@@ -21,6 +25,8 @@ public class BookInfo {
         tgGroup = b.tgGroup;
         version = b.version;
         currentChapter = b.currentChapter;
+        chatId = b.chatId;
+        position = b.position;
     }
 
     public String id() {
@@ -51,8 +57,16 @@ public class BookInfo {
         return version;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public int currentChapter() {
+        return currentChapter;
+    }
+
+    public long chatId() {
+        return chatId;
+    }
+
+    public double position() {
+        return position;
     }
 
     public static class Builder {
@@ -64,6 +78,8 @@ public class BookInfo {
         private String tgGroup;
         private int version;
         private int currentChapter;
+        private long chatId;
+        private double position = 0;
 
         public BookInfo build() {
             return new BookInfo(this);
@@ -113,5 +129,33 @@ public class BookInfo {
             this.currentChapter = currentChapter;
             return this;
         }
+
+        public Builder setChatId(long chatId) {
+            this.chatId = chatId;
+            return this;
+        }
+
+        public Builder setPosition(double position) {
+            this.position = position;
+            return this;
+        }
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public Builder toBuilder() {
+        return builder()
+                .setId(this.id)
+                .setTitle(this.title)
+                .setAuthor(this.author)
+                .setProgress(this.progress)
+                .setUpdateTime(this.updateTime)
+                .setTgGroup(this.tgGroup)
+                .setVersion(this.version)
+                .setCurrentChapter(this.currentChapter)
+                .setChatId(this.chatId)
+                .setPosition(this.position);
     }
 }

@@ -12,6 +12,7 @@
     tools:context=".ui.signin.SignInFragment">
 
     <TextView
+        android:id="@+id/signin_help"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,9 +30,12 @@
         android:layout_marginTop="96dp"
         android:layout_marginEnd="24dp"
         android:autofillHints="@string/prompt_user_id"
+        android:digits="0123456789"
         android:hint="@string/prompt_user_id"
-        android:inputType="textEmailAddress"
+        android:inputType="number"
+        android:minHeight="48dp"
         android:selectAllOnFocus="true"
+        android:imeOptions="actionDone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -44,16 +48,33 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:autofillHints="@string/prompt_accept_code"
+        android:digits="0123456789"
         android:hint="@string/prompt_accept_code"
         android:imeActionLabel="@string/prompt_accept_code"
         android:imeOptions="actionDone"
+        android:inputType="number"
+        android:minHeight="48dp"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/user_id" />
 
+    <TextView
+        android:id="@+id/signin_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="224dp"
+        android:gravity="center_horizontal"
+        app:flow_wrapMode="aligned"
+        android:maxLines="2"
+        android:textColor="@color/purple_500"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
-        android:id="@+id/login"
+        android:id="@+id/btn_done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
@@ -61,27 +82,31 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="48dp"
         android:layout_marginBottom="64dp"
-        android:enabled="false"
+        android:enabled="true"
         android:text="@string/signin_btn_label"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/accept_code"
-        app:layout_constraintVertical_bias="0.2" />
+        app:layout_constraintVertical_bias="0.191" />
 
-    <ProgressBar
-        android:id="@+id/loading"
+    <Button
+        android:id="@+id/btn_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="32dp"
+        android:layout_gravity="start"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="48dp"
         android:layout_marginBottom="64dp"
-        android:visibility="gone"
+        android:enabled="true"
+        android:text="@string/prompt_signout"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/accept_code"
-        app:layout_constraintStart_toStartOf="@+id/accept_code"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accept_code"
+        app:layout_constraintVertical_bias="0.38" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

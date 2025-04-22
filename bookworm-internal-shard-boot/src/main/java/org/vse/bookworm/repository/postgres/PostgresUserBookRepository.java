@@ -12,7 +12,6 @@ import javax.annotation.Nonnull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
 
 public class PostgresUserBookRepository implements UserBookRepository {
     private static final String sqlInsert =
@@ -20,18 +19,20 @@ public class PostgresUserBookRepository implements UserBookRepository {
                     "(" +
                     "   user_id," +
                     "   book_id," +
-                    "   book_source" +
+                    "   chat_id," +
+                    "   book_source," +
                     "   current_chapter," +
                     "   current_position," +
                     "   update_time," +
                     "   book_version," +
                     "   progress" +
                     ")" +
-                    " values" +
+                    " values " +
                     "(" +
                     "   :user_id," +
                     "   :book_id," +
-                    "   :book_source" +
+                    "   :chat_id," +
+                    "   :book_source," +
                     "   :current_chapter," +
                     "   :current_position," +
                     "   :update_time," +
@@ -47,7 +48,7 @@ public class PostgresUserBookRepository implements UserBookRepository {
                     "   progress = :progress" +
                     " where" +
                     "   user_id = :user_id" +
-                    "   book_id = :book_id";
+                    "   and book_id = :book_id";
     private static final String sqlFindByUserId =
             "select" +
                     "   *" +
@@ -63,6 +64,11 @@ public class PostgresUserBookRepository implements UserBookRepository {
                     " where " +
                     "   user_id = :user_id" +
                     "   and book_id = :book_id";
+    private static final String sqlDelete =
+            "delete from user_book" +
+                    " where " +
+                    "   user_id = :user_id" +
+                    "   and book_id = :book_id";
     private final NamedParameterJdbcTemplate jdbc;
 
     public PostgresUserBookRepository(NamedParameterJdbcTemplate jdbc) {
@@ -74,10 +80,11 @@ public class PostgresUserBookRepository implements UserBookRepository {
         var pSrc = new MapSqlParameterSource()
                 .addValue("user_id", userBook.getUserId())
                 .addValue("book_id", userBook.getBookId())
+                .addValue("chat_id", userBook.getChatId())
                 .addValue("book_source", userBook.getSource())
                 .addValue("current_chapter", userBook.getCurrentChapter())
                 .addValue("current_position", userBook.getCurrentPosition())
-                .addValue("update_time", userBook.getUpdateTime())
+                .addValue("update_time", DbUtils.timestamp(userBook.getUpdateTime()))
                 .addValue("book_version", userBook.getBookVersion())
                 .addValue("progress", userBook.getProgress());
         jdbc.update(sqlInsert, pSrc);
@@ -90,7 +97,7 @@ public class PostgresUserBookRepository implements UserBookRepository {
                 .addValue("book_id", userBook.getBookId())
                 .addValue("current_chapter", userBook.getCurrentChapter())
                 .addValue("current_position", userBook.getCurrentPosition())
-                .addValue("update_time", userBook.getUpdateTime())
+                .addValue("update_time", DbUtils.timestamp(userBook.getUpdateTime()))
                 .addValue("book_version", userBook.getBookVersion())
                 .addValue("progress", userBook.getProgress());
         jdbc.update(sqlUpdate, pSrc);
@@ -112,6 +119,14 @@ public class PostgresUserBookRepository implements UserBookRepository {
         return res.isEmpty() ? null : res.getFirst();
     }
 
+    @Override
+    public boolean delete(long userId, String bookId) {
+        var pSrc = new MapSqlParameterSource()
+                .addValue("user_id", userId)
+                .addValue("book_id", bookId);
+        return jdbc.update(sqlDelete, pSrc) > 0;
+    }
+
     private static class UserBookRowMapper implements RowMapper<UserBook> {
         static final RowMapper<UserBook> INSTANCE = new UserBookRowMapper();
 
@@ -120,6 +135,7 @@ public class PostgresUserBookRepository implements UserBookRepository {
             return UserBook.builder()
                     .setUserId(rs.getLong("user_id"))
                     .setBookId(rs.getString("book_id"))
+                    .setChatId(rs.getLong("chat_id"))
                     .setSource(rs.getString("book_source"))
                     .setCurrentChapter(rs.getInt("current_chapter"))
                     .setCurrentPosition(rs.getDouble("current_position"))

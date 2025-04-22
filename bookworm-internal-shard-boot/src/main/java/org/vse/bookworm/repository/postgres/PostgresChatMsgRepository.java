@@ -51,11 +51,13 @@ public class PostgresChatMsgRepository implements ChatMessageRepository {
             "select" +
                     "   *" +
                     " from" +
-                    "   chat_massage" +
+                    "   chat_message" +
                     " where" +
                     "   category = :category" +
                     "   and chat_id = :chat_id" +
                     "   and message_id >= :message_id" +
+                    " order by" +
+                    "   message_id" +
                     " limit" +
                     "   :limit";
     private static final String sqlDelete =

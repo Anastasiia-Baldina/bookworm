@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.vse.bookworm.dto.kafka.FileResponseDto;
 import org.vse.bookworm.dto.kafka.TextResponseDto;
 import org.vse.bookworm.kafka.KafkaResponseListener;
 import org.vse.bookworm.kafka.properties.KafkaProperties;
+import org.vse.bookworm.telegram.TelegramFileResponder;
 import org.vse.bookworm.telegram.TelegramTextResponder;
 
 @Configuration
@@ -18,6 +20,12 @@ public class ApplicationConfiguration {
     @Bean
     @ConfigurationProperties(prefix = "kafka-text-response")
     KafkaProperties textResponseKafkaProperties() {
+        return new KafkaProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "kafka-file-response")
+    KafkaProperties fileResponseKafkaProperties() {
         return new KafkaProperties();
     }
 
@@ -35,5 +43,16 @@ public class ApplicationConfiguration {
     KafkaResponseListener<TextResponseDto> kafkaTextResponseListener() {
         return new KafkaResponseListener<>(
                 TextResponseDto.class, textResponseKafkaProperties(), telegramTextResponder());
+    }
+
+    @Bean
+    TelegramFileResponder telegramFileResponder() {
+        return new TelegramFileResponder(telegramBot());
+    }
+
+    @Bean
+    KafkaResponseListener<FileResponseDto> kafkaFileResponseListener() {
+        return new KafkaResponseListener<>(
+                FileResponseDto.class, fileResponseKafkaProperties(), telegramFileResponder());
     }
 }

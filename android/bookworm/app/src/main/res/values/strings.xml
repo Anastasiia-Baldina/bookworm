@@ -22,4 +22,5 @@
     <string name="book_from_file">Добавить книгу</string>
     <string name="signin_btn_label">Войти</string>
     <string name="signin_help_label">Введите команду /login в Telegram-боте t.me/book_worm_chat_bot для получения кода пользователя</string>
+    <string name="prompt_signout">Выйти</string>
 </resources>

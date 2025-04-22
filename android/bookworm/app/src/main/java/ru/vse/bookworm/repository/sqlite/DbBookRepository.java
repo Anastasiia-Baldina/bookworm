@@ -1,19 +1,20 @@
-package ru.vse.bookworm.repository;
+package ru.vse.bookworm.repository.sqlite;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ru.vse.bookworm.book.Book;
 import ru.vse.bookworm.book.Chapter;
-import ru.vse.bookworm.db.DatabaseHelper;
+import ru.vse.bookworm.db.DbHelper;
 import ru.vse.bookworm.book.BookInfo;
+import ru.vse.bookworm.repository.BookRepository;
 
 public class DbBookRepository implements BookRepository {
-    private final DatabaseHelper dbHelper;
     private static final String sqlGetCount =
             "select count(*)" +
                     " from " +
@@ -26,13 +27,47 @@ public class DbBookRepository implements BookRepository {
                     "   title," +
                     "   author," +
                     "   progress," +
-                    "   tg_group" +
+                    "   tg_group," +
+                    "   update_time," +
+                    "   version," +
+                    "   position," +
+                    "   chat_id" +
                     " from" +
                     "   book" +
                     " where" +
                     "   deleted = 0" +
                     " order by" +
                     "   update_time desc";
+    private static final String sqlGet =
+            "select" +
+                    "   id," +
+                    "   title," +
+                    "   author," +
+                    "   progress," +
+                    "   tg_group," +
+                    "   update_time," +
+                    "   version," +
+                    "   position," +
+                    "   chat_id" +
+                    " from" +
+                    "   book" +
+                    " where" +
+                    "   id  = ?";
+    private static final String sqlListMarked =
+            "select" +
+                    "   id," +
+                    "   title," +
+                    "   author," +
+                    "   progress," +
+                    "   tg_group," +
+                    "   update_time," +
+                    "   version," +
+                    "   position," +
+                    "   chat_id" +
+                    " from" +
+                    "   book" +
+                    " where" +
+                    "   deleted = 1";
     private static final String sqlMarkAsDeleted =
             "update book set" +
                     "   deleted = 1" +
@@ -47,10 +82,13 @@ public class DbBookRepository implements BookRepository {
                     "   progress," +
                     "   tg_group," +
                     "   update_time," +
-                    "   deleted" +
+                    "   deleted," +
+                    "   version," +
+                    "   position," +
+                    "   chat_id" +
                     ")" +
                     "values" +
-                    "(?, ?, ?, ?, ?, ?, 0)";
+                    "(?, ?, ?, ?, ?, ?, 0, ?, ?, ?)";
     private static final String sqlInsertChapter =
             "insert into book_chapter" +
                     "(" +
@@ -61,6 +99,14 @@ public class DbBookRepository implements BookRepository {
                     ")" +
                     "values" +
                     "(?, ?, ?, ?)";
+    private static final String sqlDeleteChapters =
+            "delete from book_chapter" +
+                    " where" +
+                    "   book_id = ?";
+    private static final String sqlDeleteInfo =
+            "delete from book" +
+                    " where" +
+                    "   id = ?";
     private static final String sqlGetChapter =
             "select" +
                     "   title," +
@@ -70,8 +116,15 @@ public class DbBookRepository implements BookRepository {
                     " where " +
                     "   book_id = ?" +
                     "   and order_num = ?";
+    private static final String sqlSaveProgress =
+            "update book set" +
+                    "   progress = ?," +
+                    "   position = ?" +
+                    " where" +
+                    "   id = ?";
+    private final DbHelper dbHelper;
 
-    public DbBookRepository(DatabaseHelper dbHelper) {
+    public DbBookRepository(DbHelper dbHelper) {
         this.dbHelper = dbHelper;
     }
 
@@ -81,6 +134,8 @@ public class DbBookRepository implements BookRepository {
         db.beginTransaction();
         try {
             var bookInfo = book.bookInfo();
+            db.execSQL(sqlDeleteChapters, new Object[]{bookInfo.id()});
+            db.execSQL(sqlDeleteInfo, new Object[]{bookInfo.id()});
             doSaveInfo(bookInfo, db);
             doSaveChapters(bookInfo.id(), book.chapters(), db);
             db.setTransactionSuccessful();
@@ -113,6 +168,9 @@ public class DbBookRepository implements BookRepository {
                 bookInfo.progress(),
                 bookInfo.telegramGroup(),
                 bookInfo.updateTime().toEpochMilli(),
+                bookInfo.version(),
+                bookInfo.position(),
+                bookInfo.chatId()
         };
         db.execSQL(sqlInsertInfo, bindParams);
     }
@@ -141,9 +199,65 @@ public class DbBookRepository implements BookRepository {
     }
 
     @Override
-    public void markAsDeleted(String id) {
+    public BookInfo get(String bookId) {
+        var db = dbHelper.getReadableDatabase();
+        try (var cursor = db.rawQuery(sqlGet, new String[]{bookId})) {
+            if (cursor.moveToNext()) {
+                return mapBookInfoCursorRow(cursor);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void markAsDeleted(String bookId) {
         var db = dbHelper.getWritableDatabase();
-        db.execSQL(sqlMarkAsDeleted, new Object[]{id});
+        db.beginTransaction();
+        try {
+            var bindParams = new Object[]{bookId};
+            db.execSQL(sqlMarkAsDeleted, bindParams);
+            db.execSQL(sqlDeleteChapters, bindParams);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    @Override
+    public void delete(String bookId) {
+        var db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            db.execSQL(sqlDeleteChapters, new Object[]{bookId});
+            db.execSQL(sqlDeleteInfo, new Object[]{bookId});
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    @Override
+    public void saveProgress(BookInfo bookInfo) {
+        var db = dbHelper.getWritableDatabase();
+        var bindParams = new Object[]{
+                bookInfo.progress(),
+                bookInfo.position(),
+                bookInfo.id()
+        };
+        db.execSQL(sqlSaveProgress, bindParams);
+    }
+
+    @Override
+    public List<BookInfo> listMarked() {
+        var db = dbHelper.getReadableDatabase();
+        try (var cursor = db.rawQuery(sqlListMarked, null)) {
+            var count = cursor.getCount();
+            var res = new ArrayList<BookInfo>(count);
+            while (cursor.moveToNext()) {
+                res.add(mapBookInfoCursorRow(cursor));
+            }
+            return res;
+        }
     }
 
     @Override
@@ -162,6 +276,10 @@ public class DbBookRepository implements BookRepository {
                 .setAuthor(cursor.getString(2))
                 .setProgress(cursor.getInt(3))
                 .setTgGroup(cursor.getString(4))
+                .setUpdateTime(Instant.ofEpochMilli(cursor.getLong(5)))
+                .setVersion(cursor.getInt(6))
+                .setPosition(cursor.getDouble(7))
+                .setChatId(cursor.getLong(8))
                 .build();
     }
 }

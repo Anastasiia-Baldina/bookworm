@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.vse.bookworm.kafka.FacadeProperties;
+import org.vse.bookworm.kafka.KafkaFileRequestProducer;
 import org.vse.bookworm.kafka.KafkaTextMessageListener;
 import org.vse.bookworm.kafka.KafkaTextResponseProducer;
 import org.vse.bookworm.processor.cmd.*;
@@ -38,6 +39,12 @@ public class ApplicationConfiguration {
     }
 
     @Bean
+    @ConfigurationProperties(prefix = "kafka-file-request")
+    KafkaProducerProperties kafkaFileRequestProducerProperties() {
+        return new KafkaProducerProperties();
+    }
+
+    @Bean
     @ConfigurationProperties(prefix = "kafka-text-message")
     KafkaListenerProperties kafkaListenerProperties() {
         return new KafkaListenerProperties();
@@ -52,6 +59,11 @@ public class ApplicationConfiguration {
     @Bean
     KafkaTextResponseProducer kafkaTextResponseProducer() {
         return new KafkaTextResponseProducer(kafkaResponseProducerProperties());
+    }
+
+    @Bean
+    KafkaFileRequestProducer kafkaFileRequestProducer() {
+        return new KafkaFileRequestProducer(kafkaFileRequestProducerProperties());
     }
 
     @Bean
@@ -85,13 +97,19 @@ public class ApplicationConfiguration {
     }
 
     @Bean
+    CommandHandler buildHandler() {
+        return new CmdBuildHandler(kafkaFileRequestProducer());
+    }
+
+    @Bean
     TextMessageProcessor textMessageProcessor() {
         return new TextMessageProcessor(
                 List.of(
                         startCommandHandler(),
                         logingCommandHandler(),
                         subscribeHandler(),
-                        unsubscribeHandler()
+                        unsubscribeHandler(),
+                        buildHandler()
                 ),
                 kafkaTextResponseProducer(),
                 facadeClient()

@@ -1,5 +1,8 @@
 package org.vse.bookworm.service;
 
-public interface UserBookService {
+import org.vse.bookworm.dto.internal.UserBookSaveRequestDto;
+import org.vse.bookworm.dto.internal.UserBookSaveResponseDto;
 
+public interface UserBookService {
+    UserBookSaveResponseDto save(UserBookSaveRequestDto requestDto);
 }

@@ -10,20 +10,20 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
-    private static DatabaseHelper INSTANCE;
+public class DbHelper extends SQLiteOpenHelper {
+    private static DbHelper INSTANCE;
     private static final String DB_NAME = "book_worm.db";
-    private static final int SCHEMA_VERSION = 2;
+    private static final int SCHEMA_VERSION = 4;
     private final Context context;
 
-    public static synchronized DatabaseHelper getInstance(Context context) {
+    public static synchronized DbHelper getInstance(Context context) {
         if (INSTANCE == null) {
-            INSTANCE = new DatabaseHelper(context.getApplicationContext());
+            INSTANCE = new DbHelper(context.getApplicationContext());
         }
         return INSTANCE;
     }
 
-    private DatabaseHelper(@NonNull Context context) {
+    private DbHelper(@NonNull Context context) {
         super(context.getApplicationContext(), DB_NAME, null, SCHEMA_VERSION);
         this.context = context.getApplicationContext();
     }

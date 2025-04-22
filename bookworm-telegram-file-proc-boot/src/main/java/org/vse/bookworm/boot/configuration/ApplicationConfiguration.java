@@ -6,6 +6,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.vse.bookworm.kafka.KafkaFileMessageListener;
+import org.vse.bookworm.kafka.KafkaFileResponseProducer;
 import org.vse.bookworm.kafka.KafkaTextResponseProducer;
 import org.vse.bookworm.properties.FacadeProperties;
 import org.vse.bookworm.properties.KafkaListenerProperties;
@@ -22,6 +23,12 @@ public class ApplicationConfiguration {
     @Bean
     @ConfigurationProperties(prefix = "kafka-text-response")
     KafkaProducerProperties kafkaResponseProducerProperties() {
+        return new KafkaProducerProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "kafka-file-response")
+    KafkaProducerProperties kafkaFileProducerProperties() {
         return new KafkaProducerProperties();
     }
 
@@ -43,6 +50,11 @@ public class ApplicationConfiguration {
     }
 
     @Bean
+    KafkaFileResponseProducer kafkaFileResponseProducer() {
+        return new KafkaFileResponseProducer(kafkaFileProducerProperties());
+    }
+
+    @Bean
     @ConfigurationProperties(prefix = "file-processor")
     ProcessorProperties processorProperties() {
         return new ProcessorProperties();
@@ -59,6 +71,7 @@ public class ApplicationConfiguration {
         return new FileMessageProcessor(
                 processorProperties(),
                 kafkaTextResponseProducer(),
+                kafkaFileResponseProducer(),
                 facadeClient());
     }
 

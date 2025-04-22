@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.Menu;
+import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
@@ -24,10 +24,11 @@ import java.util.UUID;
 
 import ru.vse.bookworm.book.Fb2Parser;
 import ru.vse.bookworm.databinding.ActivityMainBinding;
-import ru.vse.bookworm.db.DatabaseHelper;
+import ru.vse.bookworm.db.DbHelper;
 import ru.vse.bookworm.repository.BookRepository;
-import ru.vse.bookworm.repository.DbBookRepository;
+import ru.vse.bookworm.repository.sqlite.DbBookRepository;
 import ru.vse.bookworm.ui.reader.ReaderActivity;
+import ru.vse.bookworm.utils.DeviceInfo;
 import ru.vse.bookworm.utils.Json;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -40,7 +41,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DatabaseHelper.dropDatabase(this);
+//        DatabaseHelper.dropDatabase(this);
+        DeviceInfo.createInstance(this);
+        bookRepository = new DbBookRepository(DbHelper.getInstance(this));
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -62,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         //NavigationUI.setupWithNavController(navigationView, navController);
         navigationView.setNavigationItemSelectedListener(this);
-        bookRepository = new DbBookRepository(DatabaseHelper.getInstance(this));
     }
 
     @Override
@@ -100,6 +102,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     OPEN_BOOK_FILE_REQUEST_CODE);
         } catch (Exception e) {
             Log.e("FILE_LOAD :", "Error open file dialog", e);
+            Toast.makeText(
+                    this,
+                    "Ошибка при открытии файла.\n"+ e.getMessage(),
+                    Toast.LENGTH_LONG
+            ).show();
         }
     }
 
@@ -117,6 +124,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             var filename = docFile.getName();
             if (filename == null || !filename.endsWith(".fb2")) {
+                Toast.makeText(
+                        this,
+                        "Ошибка: файл не в формате fb2.",
+                        Toast.LENGTH_LONG
+                ).show();
                 return;
             }
             try (var inStream = getContentResolver().openInputStream(uri)) {
@@ -130,7 +142,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 intent.putExtras(bundle);
                 startActivity(intent);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                Log.e("FILE_LOAD :", "Error processing file " + filename, e);
+                Toast.makeText(
+                        this,
+                        "Ошибка обработки файла.\n"+ e.getMessage(),
+                        Toast.LENGTH_LONG
+                ).show();
             }
         }
     }

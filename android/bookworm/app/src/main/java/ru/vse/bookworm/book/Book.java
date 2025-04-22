@@ -24,9 +24,13 @@ public class Book {
                 .setAuthor(author)
                 .setId(b.id)
                 .setTitle(b.title)
-                .setProgress(0)
+                .setProgress(b.progress)
                 .setUpdateTime(Instant.now())
-                .setTgGroup(null)
+                .setTgGroup(b.tgGroup)
+                .setVersion(b.version)
+                .setCurrentChapter(b.currentChapter)
+                .setChatId(b.chatId)
+                .setPosition(b.position)
                 .build();
         chapters = List.copyOf(b.chapters);
         binaries = List.copyOf(b.binaries);
@@ -54,6 +58,12 @@ public class Book {
         private String firstName = "";
         private String middleName = "";
         private String lastName = "";
+        private int version;
+        private int progress;
+        private String tgGroup;
+        private int currentChapter;
+        private long chatId;
+        private double position = 0;
 
         public Book build() {
             return new Book(this);
@@ -105,6 +115,36 @@ public class Book {
 
         public Builder setLastName(String lastName) {
             this.lastName = lastName;
+            return this;
+        }
+
+        public Builder setVersion(int version) {
+            this.version = version;
+            return this;
+        }
+
+        public Builder setProgress(int progress) {
+            this.progress = progress;
+            return this;
+        }
+
+        public Builder setTgGroup(String tgGroup) {
+            this.tgGroup = tgGroup;
+            return this;
+        }
+
+        public Builder setCurrentChapter(int currentChapter) {
+            this.currentChapter = currentChapter;
+            return this;
+        }
+
+        public Builder setChatId(long chatId) {
+            this.chatId = chatId;
+            return this;
+        }
+
+        public Builder setPosition(double position) {
+            this.position = position;
             return this;
         }
     }

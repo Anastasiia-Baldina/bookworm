@@ -7,6 +7,8 @@ import org.vse.bookworm.dto.internal.ChatRequestDto;
 import org.vse.bookworm.dto.internal.ChatResponseDto;
 import org.vse.bookworm.dto.internal.LoginRequestDto;
 import org.vse.bookworm.dto.internal.LoginResponseDto;
+import org.vse.bookworm.dto.internal.MessageListRequestDto;
+import org.vse.bookworm.dto.internal.MessageListResponseDto;
 import org.vse.bookworm.dto.internal.MessageSaveRequestDto;
 import org.vse.bookworm.dto.internal.MessageSaveResponseDto;
 import org.vse.bookworm.dto.internal.SubscribeRequestDto;

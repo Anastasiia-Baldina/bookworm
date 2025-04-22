@@ -46,11 +46,11 @@ public class PostgresBookRepository implements BookRepository {
                     ")";
     private static final String sqlUpdate =
             "update book set" +
-                    "   chat_id = :chat_id" +
-                    "   file = :file" +
+                    "   file = :file," +
                     "   book_version = :book_version" +
                     " where" +
-                    "   book_id = :book_id";
+                    "   book_id = :book_id" +
+                    "   and chat_id = :chat_id";
     private final NamedParameterJdbcTemplate jdbc;
 
     public PostgresBookRepository(NamedParameterJdbcTemplate jdbc) {

@@ -1,12 +1,12 @@
 package org.vse.bookworm.service;
 
-import org.vse.bookworm.dto.internal.MessageSaveRequestDto;
-import org.vse.bookworm.dto.internal.MessageSaveResponseDto;
-import org.vse.bookworm.dto.internal.DeleteMessageRequestDto;
-import org.vse.bookworm.dto.internal.DeleteMessageResponseDto;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.vse.bookworm.dto.internal.*;
 
 public interface ChatMessageService {
     MessageSaveResponseDto saveMessage(MessageSaveRequestDto requestDto);
 
     DeleteMessageResponseDto deleteMessage(DeleteMessageRequestDto requestDto);
+
+    MessageListResponseDto listMessage(MessageListRequestDto requestDto);
 }

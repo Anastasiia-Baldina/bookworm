@@ -22,6 +22,7 @@ create table if not exists user_book
 	user_id 			numeric(32)			not null,			-- идентификатор пользователя в Telegram
 	book_source			varchar(128),							-- источник получения
 	book_id				varchar(128)		not null,			-- идентификатор книги
+	chat_id				numeric(32)		    not null,			-- идентификатор группы в Telegram, с которой получена книга
 	current_chapter		numeric(6)			not null default 0,	-- номер открытой главы книги
 	current_position	double precision	not null default 0,	-- позиция в открытой главе книги
 	update_time			timestamp,								-- время последнего открытия

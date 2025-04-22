@@ -8,6 +8,7 @@ public class UserBook {
     private final long userId;
     private final String source;
     private final String bookId;
+    private final long chatId;
     private final int currentChapter;
     private final double currentPosition;
     private final Instant updateTime;
@@ -17,6 +18,7 @@ public class UserBook {
     private UserBook(Builder b) {
         userId = b.userId;
         bookId = Asserts.notEmpty(b.bookId, "bookId");
+        chatId = b.chatId;
         currentChapter = b.currentChapter;
         currentPosition = b.currentPosition;
         updateTime = b.updateTime;
@@ -61,10 +63,15 @@ public class UserBook {
         return source;
     }
 
+    public long getChatId() {
+        return chatId;
+    }
+
     public static class Builder {
         private long userId;
         private String source;
         private String bookId;
+        private long chatId;
         private int currentChapter;
         private double currentPosition;
         private Instant updateTime;
@@ -112,6 +119,11 @@ public class UserBook {
 
         public Builder setSource(String source) {
             this.source = source;
+            return this;
+        }
+
+        public Builder setChatId(long chatId) {
+            this.chatId = chatId;
             return this;
         }
     }

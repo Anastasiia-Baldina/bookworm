@@ -45,6 +45,8 @@ dependencies {
     implementation "com.axzae:swipelayout:1.3.0"
     implementation "jp.wasabeef:recyclerview-animators:4.0.2"
     implementation "com.google.code.gson:gson:2.12.1"
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))
+    implementation("com.squareup.okhttp3:okhttp")
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

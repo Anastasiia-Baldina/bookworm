@@ -10,21 +10,29 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.vse.bookworm.cluster.ClusterClient;
 import org.vse.bookworm.controller.BookController;
 import org.vse.bookworm.controller.ChatMessageController;
+import org.vse.bookworm.controller.SessionController;
 import org.vse.bookworm.controller.SubscriptionController;
+import org.vse.bookworm.controller.UserBookController;
+import org.vse.bookworm.controller.external.AppBookController;
+import org.vse.bookworm.controller.external.AppSessionController;
+import org.vse.bookworm.controller.external.AppUserBookController;
 import org.vse.bookworm.properties.ClusterProperties;
 import org.vse.bookworm.properties.DbProperties;
 import org.vse.bookworm.properties.SessionProperties;
-import org.vse.bookworm.repository.*;
-import org.vse.bookworm.repository.postgres.*;
-import org.vse.bookworm.controller.SessionController;
-import org.vse.bookworm.service.BookService;
-import org.vse.bookworm.service.ChatMessageService;
-import org.vse.bookworm.service.SessionService;
-import org.vse.bookworm.service.SubscriptionService;
-import org.vse.bookworm.service.impl.ShardBookService;
-import org.vse.bookworm.service.impl.ShardChatMessageService;
-import org.vse.bookworm.service.impl.ShardSessionService;
-import org.vse.bookworm.service.impl.ShardSubscriptionService;
+import org.vse.bookworm.repository.BookRepository;
+import org.vse.bookworm.repository.ChatMessageRepository;
+import org.vse.bookworm.repository.ChatRepository;
+import org.vse.bookworm.repository.SessionRepository;
+import org.vse.bookworm.repository.SubscriberRepository;
+import org.vse.bookworm.repository.UserBookRepository;
+import org.vse.bookworm.repository.postgres.PostgresBookRepository;
+import org.vse.bookworm.repository.postgres.PostgresChatMsgRepository;
+import org.vse.bookworm.repository.postgres.PostgresChatRepository;
+import org.vse.bookworm.repository.postgres.PostgresSessionRepository;
+import org.vse.bookworm.repository.postgres.PostgresSubscriberRepository;
+import org.vse.bookworm.repository.postgres.PostgresUserBookRepository;
+import org.vse.bookworm.service.*;
+import org.vse.bookworm.service.impl.*;
 import org.vse.bookworm.utils.IdGenerator;
 
 import javax.sql.DataSource;
@@ -155,5 +163,45 @@ public class ApplicationConfiguration {
     @Bean
     BookController bookController() {
         return new BookController(bookService());
+    }
+
+    @Bean
+    UserBookService userBookService() {
+        return new ShardUserBookService(userBookRepository());
+    }
+
+    @Bean
+    UserBookController userBookController() {
+        return new UserBookController(userBookService());
+    }
+
+    @Bean
+    AppSessionService appSessionService() {
+        return new ShardAppSessionService(sessionRepository());
+    }
+
+    @Bean
+    AppSessionController appSessionController() {
+        return new AppSessionController(appSessionService());
+    }
+
+    @Bean
+    AppUserBookService appUserBookService() {
+        return new ShardAppUserBookService(userBookRepository(), sessionRepository());
+    }
+
+    @Bean
+    AppUserBookController appUserBookController() {
+        return new AppUserBookController(appUserBookService());
+    }
+
+    @Bean
+    AppBookService appBookService() {
+        return new ShardAppBookService(bookRepository());
+    }
+
+    @Bean
+    AppBookController appBookController() {
+        return new AppBookController(appBookService());
     }
 }

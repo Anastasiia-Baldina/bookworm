@@ -82,7 +82,7 @@ public class PostgresSessionRepository implements SessionRepository {
                     " from" +
                     "   user_session" +
                     " where" +
-                    "   id = :id";
+                    "   session_id = :session_id";
     private final NamedParameterJdbcTemplate jdbc;
 
     public PostgresSessionRepository(NamedParameterJdbcTemplate jdbc) {
@@ -125,7 +125,7 @@ public class PostgresSessionRepository implements SessionRepository {
     @Nullable
     @Override
     public Session get(String sessionId) {
-        var pSrc = new MapSqlParameterSource("id", sessionId);
+        var pSrc = new MapSqlParameterSource("session_id", sessionId);
         var res = jdbc.query(sqlGetById, pSrc, SessionRowMapper.INSTANCE);
         return res.isEmpty() ? null : res.getFirst();
     }

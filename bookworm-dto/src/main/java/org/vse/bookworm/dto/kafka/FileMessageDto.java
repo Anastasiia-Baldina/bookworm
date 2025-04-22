@@ -11,6 +11,8 @@ public class FileMessageDto implements Partitioned {
     private String caption;
     private UserDto user;
     private ChatDto chat;
+    private boolean generated;
+    private String category;
 
     public long getMessageId() {
         return messageId;
@@ -93,6 +95,22 @@ public class FileMessageDto implements Partitioned {
         this.caption = caption;
     }
 
+    public boolean isGenerated() {
+        return generated;
+    }
+
+    public void setGenerated(boolean generated) {
+        this.generated = generated;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     @Override
     public String toString() {
         return "FileMessage{" +
@@ -124,6 +142,8 @@ public class FileMessageDto implements Partitioned {
         private UserDto user;
         private ChatDto chat;
         private String caption;
+        private boolean generated;
+        private String category;
 
         public FileMessageDto build() {
             FileMessageDto fm = new FileMessageDto();
@@ -137,6 +157,8 @@ public class FileMessageDto implements Partitioned {
             fm.setUser(user);
             fm.setChat(chat);
             fm.setCaption(caption);
+            fm.setGenerated(generated);
+            fm.setCategory(category);
 
             return fm;
         }
@@ -188,6 +210,16 @@ public class FileMessageDto implements Partitioned {
 
         public Builder setCaption(String caption) {
             this.caption = caption;
+            return this;
+        }
+
+        public Builder setGenerated(boolean generated) {
+            this.generated = generated;
+            return this;
+        }
+
+        public Builder setCategory(String category) {
+            this.category = category;
             return this;
         }
     }

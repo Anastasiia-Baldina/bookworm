@@ -69,7 +69,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>org.vse.bookworm.boot.BootResponder</mainClass>
+                    <mainClass>org.vse.bookworm.boot.BootTgResponder</mainClass>
                     <addResources>true</addResources>
                 </configuration>
                 <executions>

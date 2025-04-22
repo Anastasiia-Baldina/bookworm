@@ -32,4 +32,12 @@ public class ChatMessageController implements ChatMessageService {
         log.info("Request: /message/delete {}", Json.toJson(requestDto));
         return messageService.deleteMessage(requestDto);
     }
+
+    @Override
+    @PostMapping(value = "/list", produces = "application/json")
+    @ResponseBody
+    public MessageListResponseDto listMessage(@RequestBody MessageListRequestDto requestDto) {
+        log.info("Request: /message/list {}", Json.toJson(requestDto));
+        return messageService.listMessage(requestDto);
+    }
 }

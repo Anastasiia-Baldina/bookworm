@@ -15,6 +15,11 @@ kafka-text-response:
   producer:
     "[bootstrap.servers]": " 172.24.92.220:9092"
     "[client.id]": 'bookworm-telegram-file-proc'
+kafka-file-response:
+  topic: 'file_response'
+  producer:
+    "[bootstrap.servers]": " 172.24.92.220:9092"
+    "[client.id]": 'bookworm-telegram-file-proc'
 facade:
   host: localhost
   port: 8090

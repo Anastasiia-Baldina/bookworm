@@ -15,4 +15,6 @@ public interface UserBookRepository {
 
     @Nullable
     UserBook get(long userId, String bookId);
+
+    boolean delete(long userId, String bookId);
 }

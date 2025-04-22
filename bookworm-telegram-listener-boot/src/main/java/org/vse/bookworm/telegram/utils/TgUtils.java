@@ -71,6 +71,7 @@ public final class TgUtils {
                 .setChat(chat)
                 .setUser(user(msg))
                 .setAffinityKey(chat.getId())
+                .setPath(file.filePath())
                 .build();
     }
 

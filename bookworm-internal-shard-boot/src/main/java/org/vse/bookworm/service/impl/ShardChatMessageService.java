@@ -2,10 +2,7 @@ package org.vse.bookworm.service.impl;
 
 import org.vse.bookworm.dao.ChatMessage;
 import org.vse.bookworm.dao.Message;
-import org.vse.bookworm.dto.internal.MessageSaveRequestDto;
-import org.vse.bookworm.dto.internal.MessageSaveResponseDto;
-import org.vse.bookworm.dto.internal.DeleteMessageRequestDto;
-import org.vse.bookworm.dto.internal.DeleteMessageResponseDto;
+import org.vse.bookworm.dto.internal.*;
 import org.vse.bookworm.repository.ChatMessageRepository;
 import org.vse.bookworm.service.ChatMessageService;
 
@@ -35,6 +32,19 @@ public class ShardChatMessageService implements ChatMessageService {
     public DeleteMessageResponseDto deleteMessage(DeleteMessageRequestDto requestDto) {
         repository.delete(requestDto.getChatId(), requestDto.getMessageId());
         return new DeleteMessageResponseDto()
+                .setSuccess(true);
+    }
+
+    @Override
+    public MessageListResponseDto listMessage(MessageListRequestDto requestDto) {
+        var msgList = repository.list(requestDto.getChatId(), requestDto.getCategory(), requestDto.getStartMessageId(), requestDto.getLimit())
+                .stream()
+                .map(x -> new MessageDto()
+                        .setMessageId(x.getMessageId())
+                        .setText(x.getMessage().getText()))
+                .toList();
+        return new MessageListResponseDto()
+                .setMessages(msgList)
                 .setSuccess(true);
     }
 }
