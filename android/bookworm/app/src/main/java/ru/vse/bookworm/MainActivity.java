@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -27,6 +28,7 @@ import ru.vse.bookworm.databinding.ActivityMainBinding;
 import ru.vse.bookworm.db.DbHelper;
 import ru.vse.bookworm.repository.BookRepository;
 import ru.vse.bookworm.repository.sqlite.DbBookRepository;
+import ru.vse.bookworm.ui.catalog.CatalogFragment;
 import ru.vse.bookworm.ui.reader.ReaderActivity;
 import ru.vse.bookworm.utils.DeviceInfo;
 import ru.vse.bookworm.utils.Json;
@@ -41,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        DatabaseHelper.dropDatabase(this);
         DeviceInfo.createInstance(this);
         bookRepository = new DbBookRepository(DbHelper.getInstance(this));
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        menu.findItem(R.id.action_search).setVisible(false);
         return true;
     }
 
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        binding.drawerLayout.closeDrawer(GravityCompat.START);
         var itemId = item.getItemId();
         if (itemId == R.id.nav_file) {
             openFileDialog();
@@ -139,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 var bundle = new Bundle();
                 bundle.putString("bookInfo", Json.toJson(book.bookInfo()));
                 var intent = new Intent(getApplicationContext(), ReaderActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtras(bundle);
                 startActivity(intent);
             } catch (IOException e) {

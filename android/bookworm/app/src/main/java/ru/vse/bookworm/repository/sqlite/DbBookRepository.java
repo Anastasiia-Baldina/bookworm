@@ -5,9 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import ru.vse.bookworm.book.Binary;
 import ru.vse.bookworm.book.Book;
 import ru.vse.bookworm.book.Chapter;
 import ru.vse.bookworm.db.DbHelper;
@@ -99,8 +99,21 @@ public class DbBookRepository implements BookRepository {
                     ")" +
                     "values" +
                     "(?, ?, ?, ?)";
+    private static final String sqlInsertBinary =
+            "insert into book_binary" +
+                    "(" +
+                    "   book_id," +
+                    "   content_type," +
+                    "   entry" +
+                    ")" +
+                    "values" +
+                    "(?, ?, ?)";
     private static final String sqlDeleteChapters =
             "delete from book_chapter" +
+                    " where" +
+                    "   book_id = ?";
+    private static final String sqlDeleteBinaries =
+            "delete from book_binary" +
                     " where" +
                     "   book_id = ?";
     private static final String sqlDeleteInfo =
@@ -134,10 +147,12 @@ public class DbBookRepository implements BookRepository {
         db.beginTransaction();
         try {
             var bookInfo = book.bookInfo();
-            db.execSQL(sqlDeleteChapters, new Object[]{bookInfo.id()});
             db.execSQL(sqlDeleteInfo, new Object[]{bookInfo.id()});
+            db.execSQL(sqlDeleteChapters, new Object[]{bookInfo.id()});
+            db.execSQL(sqlDeleteBinaries, new Object[]{bookInfo.id()});
             doSaveInfo(bookInfo, db);
             doSaveChapters(bookInfo.id(), book.chapters(), db);
+            doSaveBinaries(bookInfo.id(), book.binaries(), db);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -185,6 +200,20 @@ public class DbBookRepository implements BookRepository {
         }
     }
 
+    private void doSaveBinaries(String bookId, List<Binary> binaries, SQLiteDatabase db) {
+        var stmt = db.compileStatement(sqlInsertBinary);
+        stmt.clearBindings();
+        for (var bin : binaries) {
+            if(bin.data() != null) {
+                stmt.clearBindings();
+                stmt.bindString(1, bookId);
+                stmt.bindString(2, bin.contentType());
+                stmt.bindBlob(3, bin.data());
+                stmt.executeInsert();
+            }
+        }
+    }
+
     @Override
     public List<BookInfo> list() {
         var db = dbHelper.getReadableDatabase();
@@ -217,6 +246,7 @@ public class DbBookRepository implements BookRepository {
             var bindParams = new Object[]{bookId};
             db.execSQL(sqlMarkAsDeleted, bindParams);
             db.execSQL(sqlDeleteChapters, bindParams);
+            db.execSQL(sqlDeleteBinaries, bindParams);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();

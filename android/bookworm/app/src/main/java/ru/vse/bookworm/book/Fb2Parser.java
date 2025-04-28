@@ -81,6 +81,9 @@ public class Fb2Parser implements Parser {
         if (src == null) {
             src = parser.getAttributeValue(null, "l:href");
         }
+        if (src == null) {
+            src = parser.getAttributeValue(null, "href");
+        }
 
         return src == null ? "<image>" : "<image src='" + src + "'>";
     }
@@ -311,7 +314,7 @@ public class Fb2Parser implements Parser {
         SUB("sub", "<sub>", "</sub>"),
         SUP("sup", "<sup>", "</sup>"),
         EMPTY_LINE("empty-line", "<br>", ""),
-        STANZA("stanza", "<br><div style=\"text-align:right;\"", "</div>"),
+        STANZA("stanza", "<br><div class=\"stanza\"", "</div>"),
         V("v", "<br>", ""),
         A("a", null, "</a>"),
         P("p", "<p><div style=\"text-align:justify;\">", "</div></p>"),

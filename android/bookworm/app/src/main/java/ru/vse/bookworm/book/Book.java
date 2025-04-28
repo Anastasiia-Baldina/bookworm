@@ -45,6 +45,10 @@ public class Book {
         return chapters;
     }
 
+    public List<Binary> binaries() {
+        return binaries;
+    }
+
     public static Builder builder() {
         return new Builder();
     }

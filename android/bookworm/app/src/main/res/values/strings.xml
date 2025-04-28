@@ -23,4 +23,6 @@
     <string name="signin_btn_label">Войти</string>
     <string name="signin_help_label">Введите команду /login в Telegram-боте t.me/book_worm_chat_bot для получения кода пользователя</string>
     <string name="prompt_signout">Выйти</string>
+    <string name="search">Поиск книги</string>
+    <string name="empty_book_list_info">Здесь будут отображаться\nВаши книги</string>
 </resources>

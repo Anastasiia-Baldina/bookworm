@@ -1,13 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list"
-    android:name="ru.vse.bookworm.CatalogFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="0dp"
-    android:layout_marginRight="0dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context=".ui.catalog.CatalogFragment"
-    tools:listitem="@layout/fragment_catalog" />
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp"
+    android:background="@drawable/catalog_item_selector"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/empty_book_list"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/empty_book_list_info"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:typeface="sans"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.34"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/book_list"
+        android:name="ru.vse.bookworm.CatalogFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:background="@drawable/catalog_item_selector"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".ui.catalog.CatalogFragment"
+        tools:listitem="@layout/fragment_catalog" />
+</RelativeLayout>

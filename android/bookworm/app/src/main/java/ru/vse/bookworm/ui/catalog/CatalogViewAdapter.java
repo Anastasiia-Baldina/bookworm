@@ -20,12 +20,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import ru.vse.bookworm.R;
-import ru.vse.bookworm.db.DbHelper;
 import ru.vse.bookworm.repository.BookRepository;
-import ru.vse.bookworm.repository.sqlite.DbBookRepository;
 import ru.vse.bookworm.book.BookInfo;
 import ru.vse.bookworm.ui.reader.ReaderActivity;
 import ru.vse.bookworm.utils.Json;
@@ -33,25 +34,32 @@ import ru.vse.bookworm.utils.Json;
 public class CatalogViewAdapter extends RecyclerSwipeAdapter<CatalogViewAdapter.ViewHolder> {
     private final BookRepository bookRepository;
     private final Context context;
-    private final List<BookInfo> bookInfos;
+    private final List<BookInfo> storedBooks;
+    private final SearchFilter searchFilter;
+    private List<BookInfo> filteredBooks;
 
-    public CatalogViewAdapter(Context context) {
+
+    public CatalogViewAdapter(Context context,
+                              BookRepository bookRepository,
+                              List<BookInfo> storedBooks) {
         this.context = context;
-        bookRepository = new DbBookRepository(DbHelper.getInstance(context));
-        bookInfos = bookRepository.list();
+        this.bookRepository = bookRepository;
+        this.storedBooks = storedBooks;
+        filteredBooks = new ArrayList<>(storedBooks);
+        searchFilter = new SearchFilter();
     }
 
     @Override
     @NonNull
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
-        var view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.fragment_catalog, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.fragment_catalog, viewGroup, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        var bookInfo = bookInfos.get(position);
+        var bookInfo = filteredBooks.get(position);
         viewHolder.swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
         viewHolder.author.setText(bookInfo.author());
         viewHolder.title.setText(bookInfo.title());
@@ -63,23 +71,23 @@ public class CatalogViewAdapter extends RecyclerSwipeAdapter<CatalogViewAdapter.
             var bundle = new Bundle();
             bundle.putString("bookInfo", Json.toJson(bookInfo));
             var intent = new Intent(context, ReaderActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtras(bundle);
             startActivity(context, intent, bundle);
-            //toast.cancel();
         });
         viewHolder.btnDelete.setOnClickListener(view -> {
-            var removed = bookInfos.get(position);
+            var removed = filteredBooks.get(position);
             mItemManger.removeShownLayouts(viewHolder.swipeLayout);
             bookRepository.markAsDeleted(removed.id());
-            bookInfos.remove(position);
+            filteredBooks.remove(position);
+            storedBooks.removeIf(x -> Objects.equals(x.id(), removed.id()));
             notifyItemRemoved(position);
-            notifyItemRangeChanged(position, bookInfos.size());
+            notifyItemRangeChanged(position, filteredBooks.size());
             mItemManger.closeAllItems();
         });
         String tgGroup = bookInfo.telegramGroup();
         if (tgGroup != null) {
             viewHolder.cover.setImageResource(R.drawable.ic_telegram_group_cover);
-            var srcText = "t.me/" + tgGroup;
             viewHolder.source.setText(tgGroup);
         } else {
             viewHolder.cover.setImageResource(R.drawable.ic_book_cover);
@@ -91,12 +99,16 @@ public class CatalogViewAdapter extends RecyclerSwipeAdapter<CatalogViewAdapter.
 
     @Override
     public int getItemCount() {
-        return bookInfos.size();
+        return filteredBooks.size();
     }
 
     @Override
     public int getSwipeLayoutResourceId(int i) {
         return R.id.book_swipe;
+    }
+
+    public SearchFilter getSearchFilter() {
+        return searchFilter;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -120,5 +132,56 @@ public class CatalogViewAdapter extends RecyclerSwipeAdapter<CatalogViewAdapter.
             source = itemView.findViewById(R.id.book_source);
             bookLayout = itemView.findViewById(R.id.book_layout);
         }
+    }
+
+    public class SearchFilter {
+        private List<BookInfo> matched;
+
+        public void performFiltering(CharSequence constraint) {
+            if (constraint == null || constraint.length() == 0) {
+                matched = storedBooks;
+            } else {
+                matched = new ArrayList<>(storedBooks.size());
+                String text = constraint.toString().toLowerCase();
+                for (BookInfo book : storedBooks) {
+                    if (book.author() != null && book.author().toLowerCase().contains(text)
+                            || book.title() != null && book.title().toLowerCase().contains(constraint)
+                            || book.telegramGroup() != null && book.telegramGroup().toLowerCase().contains(text)) {
+                        matched.add(book);
+                    }
+                }
+            }
+            done();
+        }
+
+        public void done() {
+            if (matched != null) {
+                filteredBooks = matched;
+                matched = null;
+                notifyDatasetChanged();
+                mItemManger.closeAllItems();
+            }
+        }
+    }
+
+    public void invalidate(List<BookInfo> newBooks) {
+        storedBooks.clear();
+        storedBooks.addAll(newBooks);
+        filteredBooks = newBooks;
+        notifyDatasetChanged();
+        mItemManger.closeAllItems();
+    }
+
+    public void updateBookState(List<BookInfo> allBooks) {
+        storedBooks.clear();
+        storedBooks.addAll(allBooks);
+        var filteredIds = filteredBooks.stream()
+                .map(BookInfo::id)
+                .collect(Collectors.toSet());
+        filteredBooks =  allBooks.stream()
+                .filter(x -> filteredIds.contains(x.id()))
+                .collect(Collectors.toList());
+        notifyDatasetChanged();
+        mItemManger.closeAllItems();
     }
 }

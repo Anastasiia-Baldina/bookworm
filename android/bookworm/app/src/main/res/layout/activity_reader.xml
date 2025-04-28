@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <!--LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/catalog_item_selector"
@@ -25,11 +25,10 @@
             android:layout_height="wrap_content"
             android:singleLine="false"
             android:text="djhsdf sdfhskdfg jshdgfjs df jdshgfjsdhf sjdfgh  hdsfgsdjfgh" />
-    </LinearLayout>
+    </LinearLayout-->
 
     <ru.vse.bookworm.ui.reader.ReaderWebView
         android:id="@+id/book_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </ru.vse.bookworm.ui.reader.ReaderWebView>
+        android:layout_height="match_parent" />
 </LinearLayout>

@@ -1,6 +1,7 @@
 package ru.vse.bookworm.book;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class Binary {
     private final String id;
@@ -23,7 +24,7 @@ public class Binary {
         return contentType;
     }
 
-    @NonNull
+    @Nullable
     public byte[] data() {
         return data;
     }
