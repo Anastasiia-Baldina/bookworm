@@ -1,9 +1,9 @@
 ### Проект Bookworm
 
 Настройка БД
-1) Скачать по ссылке https://www.postgresql.org/download/ и установить СУБД PostgreSql
+1) Скачать по ссылке https://www.postgresql.org/download/ и установить СУБД PostgreSQL
 2) Скачать по ссылке https://www.pgadmin.org/download/ и установить средство управления PgAdmin
-3) В PgAdmin создать подключение к установленной БД PostgresSql
+3) В PgAdmin создать подключение к установленной БД PostgresSQL
 4) В PgAdmin создать схему book_worm и задать пароль пользователя
 5) Выполнить скрипт в PgAdmin скрипт bookworm-internal-shard-boot/src/main/resources/db_scripts/v1.sql
 
