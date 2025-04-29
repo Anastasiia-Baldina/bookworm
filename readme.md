@@ -11,6 +11,7 @@
 1) Скачать https://kafka.apache.org/downloads и установить сервис Kafka v3.9.0
 
 Настройка Zookeeper
+
 2) Скачать https://zookeeper.apache.org/releases.html#download и установить сервис Zookeeper
 
 Backend
